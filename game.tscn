@@ -1,7 +1,59 @@
 [gd_scene load_steps=5 format=3 uid="uid://w36u071fkv8j"]
 
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_80nbo"]
+[ext_resource type="Texture2D" uid="uid://64dlpfuqfynq" path="res://assets/images/pacman_tiles.png" id="2_e2o6t"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e2o6t"]
+texture = ExtResource("2_e2o6t")
+margins = Vector2i(1, 1)
+separation = Vector2i(1, 1)
+texture_region_size = Vector2i(8, 8)
+16:3/0 = 0
+17:3/0 = 0
+18:3/0 = 0
+19:3/0 = 0
+16:4/0 = 0
+17:4/0 = 0
+18:4/0 = 0
+19:4/0 = 0
+16:5/0 = 0
+17:5/0 = 0
+18:5/0 = 0
+19:5/0 = 0
+16:6/0 = 0
+19:6/0 = 0
+16:0/0 = 0
+17:0/0 = 0
+18:0/0 = 0
+16:1/0 = 0
+17:1/0 = 0
+18:1/0 = 0
+16:2/0 = 0
+17:2/0 = 0
+18:2/0 = 0
+20:3/0 = 0
+21:3/0 = 0
+20:4/0 = 0
+21:4/0 = 0
+19:0/0 = 0
+20:0/0 = 0
+21:0/0 = 0
+19:1/0 = 0
+20:1/0 = 0
+21:1/0 = 0
+19:2/0 = 0
+20:2/0 = 0
+21:2/0 = 0
+13:4/0 = 0
+14:4/0 = 0
+15:4/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_feb5d"]
+sources/1 = SubResource("TileSetAtlasSource_e2o6t")
 
 [node name="Game" type="Node2D"]
 scale = Vector2(3, 3)
 script = ExtResource("1_80nbo")
+
+[node name="Maze" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_feb5d")
