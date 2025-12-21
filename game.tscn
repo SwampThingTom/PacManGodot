@@ -1,0 +1,7 @@
+[gd_scene load_steps=5 format=3 uid="uid://w36u071fkv8j"]
+
+[ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_80nbo"]
+
+[node name="Game" type="Node2D"]
+scale = Vector2(3, 3)
+script = ExtResource("1_80nbo")
