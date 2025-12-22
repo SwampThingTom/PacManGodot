@@ -1,9 +1,9 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://24h26788xdgn"]
 
-[ext_resource type="Texture2D" uid="uid://buif7xdpai6ls" path="res://assets/images/maze-spritesheet.png" id="1_xpb4e"]
+[ext_resource type="Texture2D" uid="uid://buif7xdpai6ls" path="res://assets/images/maze.png" id="1_g88dh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tok3w"]
-texture = ExtResource("1_xpb4e")
+texture = ExtResource("1_g88dh")
 margins = Vector2i(1, 1)
 separation = Vector2i(1, 1)
 texture_region_size = Vector2i(8, 8)

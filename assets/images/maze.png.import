@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bu8fsiuinhwo2"
-path="res://.godot/imported/font-spritesheet.png-1854cbaa46af4cbc4d5f3b391c1fe7a1.ctex"
+uid="uid://buif7xdpai6ls"
+path="res://.godot/imported/maze.png-100cebc718652122cbe5fbb5f9671c1b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/font-spritesheet.png"
-dest_files=["res://.godot/imported/font-spritesheet.png-1854cbaa46af4cbc4d5f3b391c1fe7a1.ctex"]
+source_file="res://assets/images/maze.png"
+dest_files=["res://.godot/imported/maze.png-100cebc718652122cbe5fbb5f9671c1b.ctex"]
 
 [params]
 
