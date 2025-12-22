@@ -1,6 +1,7 @@
 extends Node2D
 
 @onready var maze := $Maze
+@onready var pellets := $Pellets
 
 func _ready():
 	_center_maze()
@@ -15,3 +16,4 @@ func _center_maze():
 	var desired_top_left: Vector2 = (viewport_size - maze_size) / 2.0
 	var offset_from_origin: Vector2 = tile_size * Vector2(used.position)
 	maze.position = desired_top_left - offset_from_origin
+	pellets.position = maze.position
