@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://24h26788xdgn"]
 
-[ext_resource type="Texture2D" uid="uid://buif7xdpai6ls" path="res://assets/images/pacman-maze-spritesheet.png" id="1_xpb4e"]
+[ext_resource type="Texture2D" uid="uid://buif7xdpai6ls" path="res://assets/images/maze-spritesheet.png" id="1_xpb4e"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tok3w"]
 texture = ExtResource("1_xpb4e")

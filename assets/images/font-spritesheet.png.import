@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bu8fsiuinhwo2"
-path="res://.godot/imported/pacman-font-spritesheet.png-920fb0a68eb3931e8690a1fc0fe6d050.ctex"
+path="res://.godot/imported/font-spritesheet.png-1854cbaa46af4cbc4d5f3b391c1fe7a1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/pacman-font-spritesheet.png"
-dest_files=["res://.godot/imported/pacman-font-spritesheet.png-920fb0a68eb3931e8690a1fc0fe6d050.ctex"]
+source_file="res://assets/images/font-spritesheet.png"
+dest_files=["res://.godot/imported/font-spritesheet.png-1854cbaa46af4cbc4d5f3b391c1fe7a1.ctex"]
 
 [params]
 

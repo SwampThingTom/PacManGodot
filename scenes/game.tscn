@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=4 uid="uid://w36u071fkv8j"]
 
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_yqjtg"]
-[ext_resource type="TileSet" uid="uid://24h26788xdgn" path="res://tilesets/pacman-maze-tileset.tres" id="2_lnu2h"]
+[ext_resource type="TileSet" uid="uid://24h26788xdgn" path="res://tilesets/maze.tres" id="2_lnu2h"]
 
 [node name="Game" type="Node2D"]
 position = Vector2(624, 108)
