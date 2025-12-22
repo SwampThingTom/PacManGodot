@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=4 uid="uid://cxl7utu3rb5ot"]
+
+[ext_resource type="TileSet" uid="uid://cq64dc66dovio" path="res://tilesets/font.tres" id="1_ahhtf"]
+
+[node name="Hud" type="Node2D"]
+position = Vector2(624, 108)
+scale = Vector2(3, 3)
+
+[node name="Scores" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAADAAAAAAABAAIAAAAJAAAAAAAHAAAAAAAKAAAAAAAIAAAAAAAMAAAAAAAHAAAAAAAOAAAAAAADAAEAAAAPAAAAAAACAAAAAAAQAAAAAAAOAAAAAAAWAAAAAAACAAIAAAAEAAAAAAAFAAEAAAAFAAAAAAAAAAEAAAALAAAAAAAGAAAAAAARAAAAAAACAAEAAAASAAAAAAAEAAAAAAAXAAAAAAAFAAEAAAAYAAAAAAAAAAEAAAAFAAEAAAAAAAIAAAAGAAEAAAAAAAIAAAA=")
+tile_set = ExtResource("1_ahhtf")
