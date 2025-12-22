@@ -21,10 +21,12 @@ func run_intro() -> void:
     spawn_actors()
     await get_tree().create_timer(READY_DURATION).timeout
     ready_text.visible = false
+    pacman.start_moving()
 
 func spawn_actors() -> void:
     pacman = pacman_scene.instantiate()
     pacman.global_position = pacman_start_position()
+    pacman.maze = maze
     actors.add_child(pacman)
 
 func pacman_start_position() -> Vector2:
