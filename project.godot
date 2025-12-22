@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="PacMan"
+config/name="Pac-Man"
 config/version="0.1"
 run/main_scene="uid://w36u071fkv8j"
 config/features=PackedStringArray("4.4", "Forward Plus")
