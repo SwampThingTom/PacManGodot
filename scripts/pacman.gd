@@ -4,6 +4,7 @@ extends Node2D
 @export var speed := 60.0
 
 @onready var anim := $Sprite
+@onready var dbg := $DebugDraw
 
 var direction := Vector2.LEFT
 var desired_direction := Vector2.ZERO
@@ -12,6 +13,10 @@ var moving := false
 func _ready():
     anim.animation = "left"
     anim.pause()
+
+    if dbg.visible:
+        dbg.maze = maze
+        dbg.pacman = self
 
 func start_moving():
     moving = true

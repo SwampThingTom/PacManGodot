@@ -1,7 +1,8 @@
-[gd_scene load_steps=27 format=3 uid="uid://baxh1n1hx2v21"]
+[gd_scene load_steps=28 format=3 uid="uid://baxh1n1hx2v21"]
 
 [ext_resource type="Texture2D" uid="uid://cjdmuqjiruf40" path="res://assets/images/sprites.png" id="1_kcrxf"]
 [ext_resource type="Script" uid="uid://c1c7w4ldele7k" path="res://scripts/pacman.gd" id="1_kjyp3"]
+[ext_resource type="Script" uid="uid://cy8em1wqktgij" path="res://scripts/pacman_debug_draw.gd" id="3_utpjb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kjyp3"]
 atlas = ExtResource("1_kcrxf")
@@ -210,3 +211,8 @@ script = ExtResource("1_kjyp3")
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_gwbs6")
 animation = &"left"
+
+[node name="DebugDraw" type="Node2D" parent="." node_paths=PackedStringArray("pacman")]
+visible = false
+script = ExtResource("3_utpjb")
+pacman = NodePath("..")
