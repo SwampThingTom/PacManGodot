@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends Node2D
 
 @export var maze: TileMapLayer
 @export var speed := 60.0
@@ -6,6 +6,7 @@ extends CharacterBody2D
 @onready var anim := $Sprite
 
 var direction := Vector2.LEFT
+var desired_direction := Vector2.ZERO
 var moving := false
 
 func _ready():
@@ -14,23 +15,82 @@ func _ready():
 
 func start_moving():
     moving = true
-    anim.play("left")
-
-func stop_moving():
-    moving = false
-    anim.pause()
+    anim.play()
 
 func _process(delta):
     if not moving:
         return
+        
+    handle_input()
 
-    if is_wall_ahead():
-        stop_moving()
+    var cell: Vector2i = get_current_cell()
+    var center: Vector2 = get_center_global(cell)
+    lock_to_center(center)
+
+    try_change_direction(cell, center)
+    if not can_move(direction, cell):
+        anim.pause()
+        return
+    
+    anim.play()
+    position += direction * speed * delta
+    
+func handle_input() -> void:
+    if Input.is_action_just_pressed("move_left"):
+        desired_direction = Vector2.LEFT
+    elif Input.is_action_just_pressed("move_right"):
+        desired_direction = Vector2.RIGHT
+    elif Input.is_action_just_pressed("move_up"):
+        desired_direction = Vector2.UP
+    elif Input.is_action_just_pressed("move_down"):
+        desired_direction = Vector2.DOWN
+
+func get_current_cell() -> Vector2i:
+    return maze.local_to_map(maze.to_local(global_position))
+
+func get_center_global(cell: Vector2i) -> Vector2:
+    return maze.to_global(maze.map_to_local(cell))
+
+func lock_to_center(center: Vector2) -> void:
+    if direction.x != 0.0:
+        global_position.y = center.y
+    elif direction.y != 0.0:
+        global_position.x = center.x
+
+func try_change_direction(cell: Vector2i, center: Vector2) -> void:
+    if desired_direction == Vector2.ZERO or desired_direction == direction:
         return
 
-    position += direction * speed * delta
+    if can_move_from_cell(cell, desired_direction):
+        print("Cell: ", cell)
+        print("Direction: ", desired_direction)
+        global_position = center
+        update_direction(desired_direction)
 
-func is_wall_ahead() -> bool:
-    var ahead_pos = position + direction * 5
-    var tile = maze.local_to_map(ahead_pos)
-    return maze.get_cell_tile_data(tile) != null
+func can_move(dir: Vector2, cell: Vector2i) -> bool:
+    if dir == Vector2.ZERO:
+        return false
+    return can_move_from_cell(cell, dir)
+
+func can_move_from_cell(cell: Vector2i, dir: Vector2) -> bool:
+    if dir == Vector2.ZERO:
+        return false
+
+    var step := Vector2i(int(dir.x), int(dir.y))
+    var next_cell: Vector2i = cell + step
+    var tile = maze.get_cell_tile_data(next_cell)
+    if tile == null:
+        print("Empty tile at ", next_cell)
+    return tile == null
+
+func update_direction(dir: Vector2):
+    direction = dir
+    match direction:
+        Vector2.LEFT:
+            anim.play("left")
+        Vector2.RIGHT:
+            anim.play("right")
+        Vector2.UP:
+            anim.play("up")
+        Vector2.DOWN:
+            anim.play("down")    
