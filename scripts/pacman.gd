@@ -31,8 +31,10 @@ func _process(delta):
     var center: Vector2 = get_cell_center(cell)
     
     handle_input()
-    try_change_direction(center)
-    if not can_move_in_direction(direction):        
+    if can_change_direction(desired_direction):
+        global_position = center
+        update_direction(desired_direction) 
+    elif not can_move_in_direction(direction):        
         # TODO: It would probably be better to continue moving to center
         global_position = center # snap to center of cell
         anim.pause()
@@ -57,13 +59,8 @@ func handle_input() -> void:
     elif Input.is_action_just_pressed("move_down"):
         desired_direction = Vector2.DOWN
 
-func try_change_direction(center: Vector2) -> void:
-    if desired_direction == Vector2.ZERO or desired_direction == direction:
-        return
-
-    if can_move_in_direction(desired_direction):
-        global_position = center
-        update_direction(desired_direction)
+func can_change_direction(dir: Vector2) -> bool:
+    return dir != direction && can_move_in_direction(dir)
 
 func can_move_in_direction(dir: Vector2) -> bool:
     if dir == Vector2.ZERO:
