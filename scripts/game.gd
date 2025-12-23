@@ -30,6 +30,6 @@ func spawn_actors() -> void:
     actors.add_child(pacman)
 
 func pacman_start_position() -> Vector2:
-    var p1: Vector2 = maze.map_to_local(Vector2i(13, 27))
-    var p2: Vector2 = maze.map_to_local(Vector2i(14, 27))
+    var p1: Vector2 = maze.map_to_local(Vector2i(13, 26))
+    var p2: Vector2 = maze.map_to_local(Vector2i(14, 26))
     return (p1 + p2) * 0.5
