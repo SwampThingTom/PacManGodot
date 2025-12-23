@@ -32,8 +32,9 @@ func _process(delta):
     
     handle_input()
     try_change_direction(center)
-    if not can_move_in_direction(direction):
-        global_position = center  # snap to center of cell
+    if not can_move_in_direction(direction):        
+        # TODO: It would probably be better to continue moving to center
+        global_position = center # snap to center of cell
         anim.pause()
         return
 
