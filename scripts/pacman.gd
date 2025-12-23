@@ -29,7 +29,6 @@ func _process(delta):
 
     cell = get_current_cell()
     var center: Vector2 = get_cell_center(cell)
-    lock_to_center(center) # TODO: Is this needed?
     
     handle_input()
     try_change_direction(center)
@@ -56,12 +55,6 @@ func handle_input() -> void:
         desired_direction = Vector2.UP
     elif Input.is_action_just_pressed("move_down"):
         desired_direction = Vector2.DOWN
-
-func lock_to_center(center: Vector2) -> void:
-    if direction.x != 0.0:
-        global_position.y = center.y
-    elif direction.y != 0.0:
-        global_position.x = center.x
 
 func try_change_direction(center: Vector2) -> void:
     if desired_direction == Vector2.ZERO or desired_direction == direction:
