@@ -7,6 +7,9 @@ extends Node2D
 @onready var anim := $Sprite
 @onready var dbg := $DebugDraw
 
+var tunnel_min_x := 0
+var tunnel_max_x := 0
+
 var cell: Vector2i = Vector2.ZERO
 var direction := Vector2.LEFT
 var desired_direction := Vector2.ZERO
@@ -16,6 +19,7 @@ var pause_frames := 0
 func _ready():
     anim.animation = "left"
     anim.pause()
+    _calculate_tunnel_coordinates()
     
     if pellets:
         pellets.pellet_eaten.connect(_on_pellet_eaten)
@@ -24,6 +28,15 @@ func _ready():
     if dbg.visible:
         dbg.maze = maze
         dbg.pacman = self
+
+func _calculate_tunnel_coordinates() -> void:
+    var used := maze.get_used_rect()
+    var min_x_cell := used.position.x
+    var max_x_cell := used.position.x + used.size.x - 1
+
+    var half_tile := maze.tile_set.tile_size.x * 0.5
+    tunnel_min_x = maze.map_to_local(Vector2i(min_x_cell, 0)).x - half_tile
+    tunnel_max_x = maze.map_to_local(Vector2i(max_x_cell, 0)).x + half_tile
 
 func start_moving():
     moving = true
@@ -63,6 +76,7 @@ func _process(delta):
     anim.play()
     var speed: float = LevelData.get_pacman_norm_speed_pixels(level)
     position += direction * speed * delta
+    _handle_tunnel()
     
 func handle_input() -> void:
     if Input.is_action_just_pressed("move_left"):
@@ -97,6 +111,12 @@ func update_direction(dir: Vector2):
         Vector2.DOWN:
             anim.play("down")    
 
+func _handle_tunnel() -> void:
+    if position.x < tunnel_min_x:
+        position.x = tunnel_max_x + position.x - tunnel_min_x
+    elif position.x > tunnel_max_x:
+        position.x = tunnel_min_x + position.x - tunnel_max_x 
+   
 func _on_pellet_eaten(is_power_pellet: bool):
     pause_frames = 3 if is_power_pellet else 1
 
