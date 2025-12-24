@@ -14,6 +14,7 @@ config/name="Pac-Man"
 config/version="0.1"
 run/main_scene="uid://dacswsx7j0cbx"
 config/features=PackedStringArray("4.4", "Forward Plus")
+run/max_fps=60
 config/icon="res://icon.svg"
 
 [display]
