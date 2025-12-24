@@ -57,7 +57,7 @@ func _process(delta):
         pause_frames -= 1
         return
 
-    cell = maze.local_to_map(maze.to_local(global_position))
+    cell = maze.local_to_map(position)
     pellets.try_eat_pellet(cell)
     
     # TODO: Needed in case all pellets are eaten. Try to get rid of this.
