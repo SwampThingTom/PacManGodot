@@ -37,6 +37,9 @@ func _process(delta):
     if not moving:
         return
     
+    # Always handle input even when pausing movement
+    handle_input()
+
     if pause_frames > 0:
         pause_frames -= 1
         return
@@ -48,7 +51,6 @@ func _process(delta):
     if not moving:
         return
 
-    handle_input()
     if can_change_direction(desired_direction):
         position = maze.map_to_local(cell)
         update_direction(desired_direction) 
