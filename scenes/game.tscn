@@ -13,7 +13,7 @@ scale = Vector2(3, 3)
 script = ExtResource("1_yqjtg")
 pacman_scene = ExtResource("2_iywne")
 
-[node name="Scores" parent="." instance=ExtResource("3_lnu2h")]
+[node name="ScoresText" parent="." instance=ExtResource("3_lnu2h")]
 position = Vector2(0, 0)
 scale = Vector2(1, 1)
 

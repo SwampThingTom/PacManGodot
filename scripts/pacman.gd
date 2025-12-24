@@ -116,10 +116,9 @@ func _handle_tunnel() -> void:
         position.x = tunnel_max_x + position.x - tunnel_min_x
     elif position.x > tunnel_max_x:
         position.x = tunnel_min_x + position.x - tunnel_max_x 
-   
+
 func _on_pellet_eaten(is_power_pellet: bool):
     pause_frames = 3 if is_power_pellet else 1
 
 func _on_all_pellets_eaten():
-    print("Level Complete!")
     stop_moving()
