@@ -1,6 +1,16 @@
 extends Node2D
+## Manages a single Pac-Man game.
+##
+## Tracks number of players, current player, scores, and level.
 
 @export var pacman_scene: PackedScene
+@export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
+@export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
+
+var _current_player: int = 0
+var _scores: Array[int] = [0, 0]
+var _high_score: int = 0
+var _pacman: PacMan
 
 @onready var maze := $Maze
 @onready var pellets: Pellets = $Pellets
@@ -8,56 +18,60 @@ extends Node2D
 @onready var scores_text: ScoresText = $ScoresText
 @onready var actors := $Actors
 
-const SPAWN_DURATION := 3.0 # Seconds to wait before spawning Pac-Man & ghosts
-const READY_DURATION := 1.0 # Seconds after spawning before start of game
-
-var current_player := 0
-var scores: Array[int] = [0, 0]
-var high_score := 0
-var pacman: Node2D
 
 func _ready() -> void:
-    reset_scores()
-    pellets.pellet_eaten.connect(_on_pellet_eaten)
-    pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
-    run_intro()
+    _reset_scores()
+    _connect_signals()
+    _run_intro()
 
-func reset_scores() -> void:
-    scores = [0, 0]
+
+func _reset_scores() -> void:
+    _scores = [0, 0]
     scores_text.clear_player_score(0)
 
-func run_intro() -> void:
+
+func _connect_signals() -> void:
+    pellets.pellet_eaten.connect(_on_pellet_eaten)
+    pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
+
+
+func _run_intro() -> void:
     ready_text.visible = true
-    await get_tree().create_timer(SPAWN_DURATION).timeout
-    spawn_actors()
-    await get_tree().create_timer(READY_DURATION).timeout
+    await get_tree().create_timer(spawn_duration_sec).timeout
+    _spawn_actors()
+    await get_tree().create_timer(ready_duration_sec).timeout
     ready_text.visible = false
-    pacman.start_moving()
+    _pacman.start_moving()
 
-func spawn_actors() -> void:
-    pacman = pacman_scene.instantiate()
-    pacman.global_position = pacman_start_position()
-    pacman.maze = maze
-    pacman.pellets = pellets
-    actors.add_child(pacman)
 
-func pacman_start_position() -> Vector2:
+func _spawn_actors() -> void:
+    _pacman = pacman_scene.instantiate()
+    _pacman.global_position = _get_pacman_start_position()
+    _pacman.maze = maze
+    _pacman.pellets = pellets
+    actors.add_child(_pacman)
+
+
+func _get_pacman_start_position() -> Vector2:
     var p1: Vector2 = maze.map_to_local(Vector2i(13, 26))
     var p2: Vector2 = maze.map_to_local(Vector2i(14, 26))
     return (p1 + p2) * 0.5
+
 
 func _on_pellet_eaten(is_power_pellet: bool):
     var points := 50 if is_power_pellet else 10
     _update_current_player_score(points)
 
+
 func _update_current_player_score(points: int) -> void:
-    scores[current_player] += points
-    var current_score := scores[current_player]
-    scores_text.draw_player_score(current_player, current_score)
+    _scores[_current_player] += points
+    var current_score := _scores[_current_player]
+    scores_text.draw_player_score(_current_player, current_score)
     
-    if current_score > high_score:
-        high_score = current_score
+    if current_score > _high_score:
+        _high_score = current_score
         scores_text.draw_high_score(current_score)
+
 
 func _on_all_pellets_eaten():
     print("Level Complete!")

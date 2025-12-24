@@ -1,6 +1,8 @@
-# LevelData.gd
-# Global level data for Pac-Man.
 class_name LevelData
+## Global level data for Pac-Man.
+##
+## Provides the GameLevel values for each level of the game.
+## Note that levels after 21 use the same values as level 21.
 
 # Tile size in pixels (original arcade uses 8x8 tiles).
 const TILE_SIZE: float = 8.0
@@ -15,10 +17,7 @@ const MAX_DEFINED_LEVEL: int = 21
 static var _levels: Array[GameLevel] = []
 
 
-static func _ensure_initialized() -> void:
-    if not _levels.is_empty():
-        return
-
+static func _static_init() -> void:
     _levels = [
         GameLevel.new(0.80, 0.90), # 1
         GameLevel.new(0.90, 0.95), # 2
@@ -44,25 +43,12 @@ static func _ensure_initialized() -> void:
     ]
 
 
-static func _clamp_level(level: int) -> int:
-    if level < 1:
-        return 1
-    if level > MAX_DEFINED_LEVEL:
-        return MAX_DEFINED_LEVEL
-    return level
+static func get_pacman_norm_speed_pixels(level: int) -> float:
+    return get_pacman_normal_speed_tiles(level) * TILE_SIZE
 
 
-static func _get_level_index(level: int) -> int:
-    return _clamp_level(level) - 1
-
-
-static func _get_level_data(level: int) -> GameLevel:
-    _ensure_initialized()
-    return _levels[_get_level_index(level)]
-
-
-static func get_level_data(level: int) -> GameLevel:
-    return _get_level_data(level)
+static func get_pacman_fright_speed_pixels(level: int) -> float:
+    return get_pacman_fright_speed_tiles(level) * TILE_SIZE
 
 
 static func get_pacman_normal_speed_tiles(level: int) -> float:
@@ -75,9 +61,10 @@ static func get_pacman_fright_speed_tiles(level: int) -> float:
     return data.pacman_fright_speed_mult * MAX_TILES_PER_SECOND
 
 
-static func get_pacman_norm_speed_pixels(level: int) -> float:
-    return get_pacman_normal_speed_tiles(level) * TILE_SIZE
+static func _get_level_data(level: int) -> GameLevel:
+    return _levels[_get_level_index(level)]
 
 
-static func get_pacman_fright_speed_pixels(level: int) -> float:
-    return get_pacman_fright_speed_tiles(level) * TILE_SIZE
+static func _get_level_index(level: int) -> int:
+    assert(level > 0, "Level must be 1 or greater.")
+    return min(level, MAX_DEFINED_LEVEL) - 1
