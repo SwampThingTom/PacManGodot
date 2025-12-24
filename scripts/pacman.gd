@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var maze: TileMapLayer
-@export var pellets: PelletsLayer
+@export var pellets: Pellets
 @export var level := 1
 
 @onready var anim := $Sprite

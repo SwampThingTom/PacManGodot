@@ -1,5 +1,5 @@
 extends TileMapLayer
-class_name PelletsLayer
+class_name Pellets
 
 signal power_pellet_eaten()
 
