@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var maze: TileMapLayer
-@export var speed := 60.0
+@export var level := 1
 
 @onready var anim := $Sprite
 @onready var dbg := $DebugDraw
@@ -39,6 +39,7 @@ func _process(delta):
         return
 
     anim.play()
+    var speed: float = LevelData.get_pacman_norm_speed_pixels(level)
     position += direction * speed * delta
     
 func handle_input() -> void:
