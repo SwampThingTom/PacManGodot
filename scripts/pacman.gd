@@ -16,6 +16,10 @@ var pause_frames := 0
 func _ready():
     anim.animation = "left"
     anim.pause()
+    
+    if pellets:
+        pellets.pellet_eaten.connect(_on_pellet_eaten)
+        pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
 
     if dbg.visible:
         dbg.maze = maze
@@ -38,13 +42,11 @@ func _process(delta):
         return
 
     cell = maze.local_to_map(maze.to_local(global_position))
-    if pellets.did_eat_pellet(cell):
-        pause_frames = 1
-        if pellets.pellets_remaining <= 0:
-            # TODO: consider sending a signal?
-            print("Level Complete!")
-            stop_moving()
-            return
+    pellets.try_eat_pellet(cell)
+    
+    # TODO: Needed in case all pellets are eaten. Try to get rid of this.
+    if not moving:
+        return
 
     handle_input()
     if can_change_direction(desired_direction):
@@ -92,3 +94,10 @@ func update_direction(dir: Vector2):
             anim.play("up")
         Vector2.DOWN:
             anim.play("down")    
+
+func _on_pellet_eaten(is_power_pellet: bool):
+    pause_frames = 3 if is_power_pellet else 1
+
+func _on_all_pellets_eaten():
+    print("Level Complete!")
+    stop_moving()

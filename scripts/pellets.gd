@@ -1,7 +1,8 @@
 extends TileMapLayer
 class_name Pellets
 
-signal power_pellet_eaten()
+signal pellet_eaten(is_power_pellet: bool)
+signal all_pellets_eaten
 
 var pellets_remaining: int = 0
 
@@ -14,18 +15,19 @@ func _count_pellets() -> int:
         count += 1
     return count
 
-func did_eat_pellet(grid_pos: Vector2i) -> bool:
+func try_eat_pellet(grid_pos: Vector2i) -> void:
     var tile_data := get_cell_tile_data(grid_pos)
     if tile_data == null:
-        return false
+        return
 
     set_cell(grid_pos, -1)
     pellets_remaining -= 1
 
-    if _tile_has_power_pellet(tile_data):
-        emit_signal("power_pellet_eaten")
-
-    return true
+    var is_power_pellet := _tile_has_power_pellet(tile_data)
+    emit_signal("pellet_eaten", is_power_pellet)
+    
+    if pellets_remaining <= 0:
+        emit_signal("all_pellets_eaten")
 
 func _tile_has_power_pellet(tile_data: TileData) -> bool:
     if not tile_data.has_custom_data("is_power_pellet"):
