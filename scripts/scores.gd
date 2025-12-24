@@ -18,6 +18,7 @@ var digit_atlas_coords: Array[Vector2i] = [
 
 @export var p1_score_origin: Vector2i = Vector2i(1, 1)
 @export var p2_score_origin: Vector2i = Vector2i(20, 1)
+@export var high_score_origin: Vector2i = Vector2i(11, 1)
 
 func clear_player_score(player_index: int) -> void:
     var origin := p1_score_origin if player_index == 0 else p2_score_origin
@@ -35,6 +36,9 @@ func _clear_score_at(origin: Vector2i) -> void:
 func draw_player_score(player_index: int, score: int) -> void:
     var origin := p1_score_origin if player_index == 0 else p2_score_origin
     _draw_score_at(origin, score)
+
+func draw_high_score(score: int) -> void:
+    _draw_score_at(high_score_origin, score)
 
 func _draw_score_at(origin: Vector2i, score: int) -> void:
     # Pac-Man only shows 6 digits of score and the lsd is always 0

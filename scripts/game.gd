@@ -25,7 +25,6 @@ func _ready() -> void:
 func reset_scores() -> void:
     scores = [0, 0]
     scores_text.clear_player_score(0)
-    scores_text.clear_player_score(1)
 
 func run_intro() -> void:
     ready_text.visible = true
@@ -53,7 +52,12 @@ func _on_pellet_eaten(is_power_pellet: bool):
 
 func _update_current_player_score(points: int) -> void:
     scores[current_player] += points
-    scores_text.draw_player_score(current_player, scores[current_player])
+    var current_score := scores[current_player]
+    scores_text.draw_player_score(current_player, current_score)
+    
+    if current_score > high_score:
+        high_score = current_score
+        scores_text.draw_high_score(current_score)
 
 func _on_all_pellets_eaten():
     print("Level Complete!")
