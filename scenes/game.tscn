@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://baxh1n1hx2v21" path="res://scenes/pacman.tscn" id="2_iywne"]
 [ext_resource type="TileSet" uid="uid://24h26788xdgn" path="res://tilesets/maze.tres" id="2_lnu2h"]
-[ext_resource type="PackedScene" uid="uid://cxl7utu3rb5ot" path="res://scenes/hud.tscn" id="3_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://cxl7utu3rb5ot" path="res://scenes/scores.tscn" id="3_lnu2h"]
 [ext_resource type="TileSet" uid="uid://cq64dc66dovio" path="res://tilesets/font.tres" id="5_p57ef"]
 [ext_resource type="Script" uid="uid://bao66gy5xp8hd" path="res://scripts/pellets_layer.gd" id="5_u5sy4"]
 
@@ -13,7 +13,7 @@ scale = Vector2(3, 3)
 script = ExtResource("1_yqjtg")
 pacman_scene = ExtResource("2_iywne")
 
-[node name="Hud" parent="." instance=ExtResource("3_lnu2h")]
+[node name="Scores" parent="." instance=ExtResource("3_lnu2h")]
 position = Vector2(0, 0)
 scale = Vector2(1, 1)
 
