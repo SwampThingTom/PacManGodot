@@ -11,6 +11,7 @@ var cell: Vector2i = Vector2.ZERO
 var direction := Vector2.LEFT
 var desired_direction := Vector2.ZERO
 var moving := false
+var pause_frames := 0
 
 func _ready():
     anim.animation = "left"
@@ -23,16 +24,27 @@ func _ready():
 func start_moving():
     moving = true
     anim.play()
+    
+func stop_moving():
+    moving = false
+    anim.pause()
 
 func _process(delta):
     if not moving:
         return
+    
+    if pause_frames > 0:
+        pause_frames -= 1
+        return
 
     cell = maze.local_to_map(maze.to_local(global_position))
-    if pellets.did_eat_pellet(cell) && pellets.pellets_remaining <= 0:
-        print("Level Complete!")
-        moving = false
-        anim.pause()
+    if pellets.did_eat_pellet(cell):
+        pause_frames = 1
+        if pellets.pellets_remaining <= 0:
+            # TODO: consider sending a signal?
+            print("Level Complete!")
+            stop_moving()
+            return
 
     handle_input()
     if can_change_direction(desired_direction):
