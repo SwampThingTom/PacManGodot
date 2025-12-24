@@ -27,27 +27,19 @@ func _process(delta):
     if not moving:
         return
 
-    cell = get_current_cell()
-    var center: Vector2 = get_cell_center(cell)
-    
+    cell = maze.local_to_map(maze.to_local(global_position))
     handle_input()
     if can_change_direction(desired_direction):
-        global_position = center
+        position = maze.map_to_local(cell)
         update_direction(desired_direction) 
     elif not can_move_in_direction(direction):        
         # TODO: It would probably be better to continue moving to center
-        global_position = center # snap to center of cell
+        position = maze.map_to_local(cell) # snap to center of cell
         anim.pause()
         return
 
     anim.play()
     position += direction * speed * delta
-
-func get_current_cell() -> Vector2i:
-    return maze.local_to_map(maze.to_local(global_position))
-
-func get_cell_center(cell: Vector2i) -> Vector2:
-    return maze.to_global(maze.map_to_local(cell))
     
 func handle_input() -> void:
     if Input.is_action_just_pressed("move_left"):
