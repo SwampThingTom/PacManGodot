@@ -1,6 +1,7 @@
 extends Node2D
 
 @export var maze: TileMapLayer
+@export var pellets: PelletsLayer
 @export var level := 1
 
 @onready var anim := $Sprite
@@ -28,6 +29,11 @@ func _process(delta):
         return
 
     cell = maze.local_to_map(maze.to_local(global_position))
+    if pellets.did_eat_pellet(cell) && pellets.pellets_remaining <= 0:
+        print("Level Complete!")
+        moving = false
+        anim.pause()
+
     handle_input()
     if can_change_direction(desired_direction):
         position = maze.map_to_local(cell)

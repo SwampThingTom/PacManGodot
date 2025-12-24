@@ -27,6 +27,7 @@ func spawn_actors() -> void:
     pacman = pacman_scene.instantiate()
     pacman.global_position = pacman_start_position()
     pacman.maze = maze
+    pacman.pellets = pellets
     actors.add_child(pacman)
 
 func pacman_start_position() -> Vector2:
