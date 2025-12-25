@@ -4,6 +4,7 @@ extends Node2D
 ## Tracks number of players, current player, scores, and level.
 
 @export var pacman_scene: PackedScene
+@export var ghost_scene: PackedScene
 @export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
 @export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
 
@@ -11,6 +12,7 @@ var _current_player: int = 0
 var _scores: Array[int] = [0, 0]
 var _high_score: int = 0
 var _pacman: PacMan
+var _ghost: Ghost
 
 @onready var maze := $Maze
 @onready var pellets: Pellets = $Pellets
@@ -42,6 +44,7 @@ func _run_intro() -> void:
     await get_tree().create_timer(ready_duration_sec).timeout
     ready_text.visible = false
     _pacman.start_moving()
+    _ghost.start_moving()
 
 
 func _spawn_actors() -> void:
@@ -50,11 +53,22 @@ func _spawn_actors() -> void:
     _pacman.maze = maze
     _pacman.pellets = pellets
     actors.add_child(_pacman)
+    
+    _ghost = ghost_scene.instantiate()
+    _ghost.global_position = _get_blinky_start_position()
+    _ghost.maze = maze
+    actors.add_child(_ghost)
 
 
 func _get_pacman_start_position() -> Vector2:
     var p1: Vector2 = maze.map_to_local(Vector2i(13, 26))
     var p2: Vector2 = maze.map_to_local(Vector2i(14, 26))
+    return (p1 + p2) * 0.5
+
+
+func _get_blinky_start_position() -> Vector2:
+    var p1: Vector2 = maze.map_to_local(Vector2i(13, 14))
+    var p2: Vector2 = maze.map_to_local(Vector2i(14, 14))
     return (p1 + p2) * 0.5
 
 
