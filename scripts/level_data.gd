@@ -19,36 +19,48 @@ static var _levels: Array[GameLevel] = []
 
 static func _static_init() -> void:
     _levels = [
-        GameLevel.new(0.80, 0.90), # 1
-        GameLevel.new(0.90, 0.95), # 2
-        GameLevel.new(0.90, 0.95), # 3
-        GameLevel.new(0.90, 0.95), # 4
-        GameLevel.new(1.00, 1.00), # 5
-        GameLevel.new(1.00, 1.00), # 6
-        GameLevel.new(1.00, 1.00), # 7'
-        GameLevel.new(1.00, 1.00), # 8
-        GameLevel.new(1.00, 1.00), # 9
-        GameLevel.new(1.00, 1.00), # 10
-        GameLevel.new(1.00, 1.00), # 11
-        GameLevel.new(1.00, 1.00), # 12
-        GameLevel.new(1.00, 1.00), # 13
-        GameLevel.new(1.00, 1.00), # 14
-        GameLevel.new(1.00, 1.00), # 15
-        GameLevel.new(1.00, 1.00), # 16
-        GameLevel.new(1.00, 1.00), # 17
-        GameLevel.new(1.00, 1.00), # 18
-        GameLevel.new(1.00, 1.00), # 19
-        GameLevel.new(1.00, 1.00), # 20
-        GameLevel.new(0.90, 0.90), # 21+
+        GameLevel.new(0.80, 0.90, 0.75, 0.40, 0.50), # 1
+        GameLevel.new(0.90, 0.95, 0.85, 0.45, 0.55), # 2
+        GameLevel.new(0.90, 0.95, 0.85, 0.45, 0.55), # 3
+        GameLevel.new(0.90, 0.95, 0.85, 0.45, 0.55), # 4
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 5
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 6
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 7'
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 8
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 9
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 10
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 11
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 12
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 13
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 14
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 15
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 16
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 17
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 18
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 19
+        GameLevel.new(1.00, 1.00, 0.95, 0.50, 0.60), # 20
+        GameLevel.new(0.90, 0.90, 0.95, 0.50, 0.60), # 21+
     ]
 
 
-static func get_pacman_norm_speed_pixels(level: int) -> float:
+static func get_pacman_normal_speed_pixels(level: int) -> float:
     return get_pacman_normal_speed_tiles(level) * TILE_SIZE
 
 
 static func get_pacman_fright_speed_pixels(level: int) -> float:
     return get_pacman_fright_speed_tiles(level) * TILE_SIZE
+
+
+static func get_ghost_normal_speed_pixels(level: int) -> float:
+    return get_ghost_normal_speed_tiles(level) * TILE_SIZE
+
+
+static func get_ghost_tunnel_speed_pixels(level: int) -> float:
+    return get_ghost_tunnel_speed_tiles(level) * TILE_SIZE
+
+
+static func get_ghost_fright_speed_pixels(level: int) -> float:
+    return get_ghost_fright_speed_tiles(level) * TILE_SIZE
 
 
 static func get_pacman_normal_speed_tiles(level: int) -> float:
@@ -59,6 +71,21 @@ static func get_pacman_normal_speed_tiles(level: int) -> float:
 static func get_pacman_fright_speed_tiles(level: int) -> float:
     var data := _get_level_data(level)
     return data.pacman_fright_speed_mult * MAX_TILES_PER_SECOND
+
+
+static func get_ghost_normal_speed_tiles(level: int) -> float:
+    var data := _get_level_data(level)
+    return data.ghost_normal_speed_mult * MAX_TILES_PER_SECOND
+
+
+static func get_ghost_tunnel_speed_tiles(level: int) -> float:
+    var data := _get_level_data(level)
+    return data.ghost_tunnel_speed_mult * MAX_TILES_PER_SECOND
+
+
+static func get_ghost_fright_speed_tiles(level: int) -> float:
+    var data := _get_level_data(level)
+    return data.ghost_fright_speed_mult * MAX_TILES_PER_SECOND
 
 
 static func _get_level_data(level: int) -> GameLevel:

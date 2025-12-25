@@ -56,7 +56,7 @@ func _process(delta):
         return
 
     anim.play()
-    var speed: float = LevelData.get_pacman_norm_speed_pixels(level)
+    var speed: float = LevelData.get_pacman_normal_speed_pixels(level)
     position += _direction * speed * delta
     position = maze.handle_tunnel(position)
 
