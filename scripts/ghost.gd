@@ -73,11 +73,17 @@ func _determine_next_cell() -> void:
 
 
 func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
+    # Ghosts can not move up from these tiles
+    var safe_zone_cells: Array[Vector2i] = [
+        Vector2i(12, 14), Vector2i(15, 14), Vector2i(12, 26), Vector2i(15, 26)
+    ]
+
     # Order matters to break ties the same way the arcade game did
     var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.LEFT, Vector2i.DOWN, Vector2i.RIGHT]
 
     # Next cell can be outside of the maze if going through a tunnel
     from_cell = maze.wrap_cell(from_cell)
+    var is_safe_cell := safe_zone_cells.has(from_cell)
 
     var best_dir: Vector2i = dir
     var best_score := INF
@@ -85,6 +91,9 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     for d in directions:
         # Don’t reverse
         if d == -dir:
+            continue
+
+        if d == Vector2i.UP and is_safe_cell and _mode != GhostMode.Mode.FRIGHTENED:
             continue
 
         if not maze.is_open(from_cell, d):
