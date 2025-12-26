@@ -59,6 +59,8 @@ func _spawn_actors() -> void:
     _ghost = ghost_scene.instantiate()
     _ghost.global_position = _get_blinky_start_position()
     _ghost.maze = maze
+    _ghost.pacman = _pacman
+    _ghost.ghost_mode = ghost_mode
     actors.add_child(_ghost)
 
 

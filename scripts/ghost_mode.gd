@@ -2,6 +2,8 @@ class_name GhostMode
 extends Node
 ## Manages the current ghost mode.
 
+signal mode_changed(new_mode: Mode)
+
 enum Mode {
     SCATTER,
     CHASE,
@@ -44,6 +46,7 @@ func _process(delta: float) -> void:
         _mode = Mode.CHASE if mode == Mode.SCATTER else Mode.SCATTER
         _mode_index += 1
         _duration = _get_duration(_level)
+        mode_changed.emit(_mode)
 
 
 func start(level: int) -> void:

@@ -7,10 +7,13 @@ extends Node2D
 const CENTER_EPS := 0.05
 
 @export var maze: Maze
+@export var ghost_mode: GhostMode
+@export var pacman: PacMan
 @export var level: int = 1
 
 var moving: bool = false
 
+var _mode: GhostMode.Mode
 var _cell: Vector2i
 var _direction := Vector2i.LEFT
 
@@ -22,6 +25,8 @@ var _next_direction: Vector2i
 
 
 func _ready():
+    _mode = ghost_mode.get_mode()
+    ghost_mode.mode_changed.connect(_on_mode_changed)
     _cell = maze.get_cell(position)
     _determine_next_cell()
     anim.animation = "left"
@@ -38,8 +43,8 @@ func _process(delta):
     
     if distance_to_next_cell > move_distance + CENTER_EPS:
         # Continue moving to next cell
+        # Note: don't handle tunnel here -- only teleport at cell center.
         position += move_distance * _direction
-        position = maze.handle_tunnel(position)
         return
     
     # Snap to cell center
@@ -71,6 +76,9 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     # Order matters to break ties the same way the arcade game did
     var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.LEFT, Vector2i.DOWN, Vector2i.RIGHT]
 
+    # Next cell can be outside of the maze if going through a tunnel
+    from_cell = maze.wrap_cell(from_cell)
+
     var best_dir: Vector2i = dir
     var best_score := INF
 
@@ -100,7 +108,9 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
 
 
 func _get_target_tile() -> Vector2i:
-    return Vector2i(25, 0)
+    if _mode == GhostMode.Mode.SCATTER:
+        return Vector2i(25, 0)
+    return pacman.get_cell()
 
 
 func _update_direction(dir: Vector2i):
@@ -114,3 +124,10 @@ func _update_direction(dir: Vector2i):
             anim.play("up")
         Vector2i.DOWN:
             anim.play("down")
+
+
+func _on_mode_changed(new_mode: GhostMode.Mode):
+    if _mode != GhostMode.Mode.FRIGHTENED:
+        # Reverse direction when mode changes
+        _next_direction = -_direction
+    _mode = new_mode

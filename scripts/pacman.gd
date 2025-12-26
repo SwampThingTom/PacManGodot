@@ -71,6 +71,10 @@ func stop_moving():
     anim.pause()
 
 
+func get_cell():
+    return _cell
+
+
 func _connect_signals() -> void:
     pellets.pellet_eaten.connect(_on_pellet_eaten)
     pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
