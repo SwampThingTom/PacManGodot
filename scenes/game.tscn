@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://w36u071fkv8j"]
+[gd_scene load_steps=10 format=4 uid="uid://w36u071fkv8j"]
 
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://baxh1n1hx2v21" path="res://scenes/pacman.tscn" id="2_iywne"]
@@ -8,6 +8,7 @@
 [ext_resource type="TileSet" uid="uid://cq64dc66dovio" path="res://tilesets/font.tres" id="5_p57ef"]
 [ext_resource type="Script" uid="uid://bao66gy5xp8hd" path="res://scripts/pellets.gd" id="5_u5sy4"]
 [ext_resource type="Script" uid="uid://fpold7bggo7p" path="res://scripts/maze.gd" id="6_gee14"]
+[ext_resource type="Script" uid="uid://c13304fq6gxnj" path="res://scripts/ghost_mode.gd" id="9_0tnpc"]
 
 [node name="Game" type="Node2D"]
 position = Vector2(624, 108)
@@ -31,5 +32,8 @@ script = ExtResource("5_u5sy4")
 [node name="ReadyText" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AAALABQAAAACABkAAAAMABQAAAAEABgAAAANABQAAAAAABgAAAAOABQAAAADABgAAAAPABQAAAAJABkAAAAQABQAAAALABkAAAA=")
 tile_set = ExtResource("5_p57ef")
+
+[node name="GhostMode" type="Node" parent="."]
+script = ExtResource("9_0tnpc")
 
 [node name="Actors" type="Node2D" parent="."]

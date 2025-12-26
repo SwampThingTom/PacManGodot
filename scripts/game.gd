@@ -18,6 +18,7 @@ var _ghost: Ghost
 @onready var pellets: Pellets = $Pellets
 @onready var ready_text := $ReadyText
 @onready var scores_text: ScoresText = $ScoresText
+@onready var ghost_mode: GhostMode = $GhostMode
 @onready var actors := $Actors
 
 
@@ -45,6 +46,7 @@ func _run_intro() -> void:
     ready_text.visible = false
     _pacman.start_moving()
     _ghost.start_moving()
+    ghost_mode.start(1)
 
 
 func _spawn_actors() -> void:
