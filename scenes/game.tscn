@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://baxh1n1hx2v21" path="res://scenes/pacman.tscn" id="2_iywne"]
-[ext_resource type="TileSet" uid="uid://24h26788xdgn" path="res://tilesets/maze.tres" id="2_lnu2h"]
+[ext_resource type="TileSet" uid="uid://24h26788xdgn" path="res://resources/maze.tres" id="2_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://cxl7utu3rb5ot" path="res://scenes/scores.tscn" id="3_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://dpdwtlkxx3uth" path="res://scenes/ghost.tscn" id="3_u5sy4"]
-[ext_resource type="TileSet" uid="uid://cq64dc66dovio" path="res://tilesets/font.tres" id="5_p57ef"]
+[ext_resource type="TileSet" uid="uid://cq64dc66dovio" path="res://resources/font.tres" id="5_p57ef"]
 [ext_resource type="Script" uid="uid://bao66gy5xp8hd" path="res://scripts/pellets.gd" id="5_u5sy4"]
 [ext_resource type="Script" uid="uid://fpold7bggo7p" path="res://scripts/maze.gd" id="6_gee14"]
 [ext_resource type="Script" uid="uid://c13304fq6gxnj" path="res://scripts/ghost_mode.gd" id="9_0tnpc"]
