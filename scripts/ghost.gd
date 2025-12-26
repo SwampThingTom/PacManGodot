@@ -4,6 +4,13 @@ extends Node2D
 ##
 ## Moves a ghost around the maze looking for Pac-Man.
 
+enum State {
+    IN_HOUSE,
+    LEAVE_HOUSE,
+    RETURN_HOUSE,
+    ACTIVE
+}
+
 const CENTER_EPS := 0.05
 
 @export var maze: Maze
@@ -12,6 +19,7 @@ const CENTER_EPS := 0.05
 @export var level: int = 1
 
 var moving: bool = false
+var state := State.IN_HOUSE
 
 var _mode: GhostMode.Mode
 var _cell: Vector2i
@@ -35,6 +43,9 @@ func _ready():
 
 func _process(delta):
     if not moving:
+        return
+    
+    if state != State.ACTIVE:
         return
     
     var speed: float = LevelData.get_ghost_normal_speed_pixels(level)

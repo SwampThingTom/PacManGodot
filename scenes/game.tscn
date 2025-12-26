@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://w36u071fkv8j"]
+[gd_scene load_steps=11 format=4 uid="uid://w36u071fkv8j"]
 
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://baxh1n1hx2v21" path="res://scenes/pacman.tscn" id="2_iywne"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://bao66gy5xp8hd" path="res://scripts/pellets.gd" id="5_u5sy4"]
 [ext_resource type="Script" uid="uid://fpold7bggo7p" path="res://scripts/maze.gd" id="6_gee14"]
 [ext_resource type="Script" uid="uid://c13304fq6gxnj" path="res://scripts/ghost_mode.gd" id="9_0tnpc"]
+[ext_resource type="Script" uid="uid://c0kw5cc3uo1ml" path="res://scripts/ghosts.gd" id="10_vtaks"]
 
 [node name="Game" type="Node2D"]
 position = Vector2(624, 108)
@@ -36,4 +37,5 @@ tile_set = ExtResource("5_p57ef")
 [node name="GhostMode" type="Node" parent="."]
 script = ExtResource("9_0tnpc")
 
-[node name="Actors" type="Node2D" parent="."]
+[node name="Ghosts" type="Node2D" parent="."]
+script = ExtResource("10_vtaks")
