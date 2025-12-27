@@ -3,6 +3,12 @@ extends Node2D
 ##
 ## Tracks number of players, current player, scores, and level.
 
+const GHOST_SCENE := preload("res://scenes/ghost.tscn")
+const BLINKY_FRAMES := preload("res://resources/blinky.tres")
+const PINKY_FRAMES  := preload("res://resources/pinky.tres")
+const INKY_FRAMES   := preload("res://resources/inky.tres")
+const CLYDE_FRAMES  := preload("res://resources/clyde.tres")
+
 @export var pacman_scene: PackedScene
 @export var ghost_scene: PackedScene
 @export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
@@ -75,6 +81,7 @@ func _get_pacman_start_position() -> Vector2:
 func _make_blinky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Blinky"
+    ghost.animations = BLINKY_FRAMES
     ghost.global_position = _get_blinky_start_position()
     ghost.state = Ghost.State.ACTIVE
     ghost.maze = maze
@@ -92,6 +99,7 @@ func _get_blinky_start_position() -> Vector2:
 func _make_pinky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Pinky"
+    ghost.animations = PINKY_FRAMES
     ghost.global_position = _get_pinky_start_position()
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
@@ -109,6 +117,7 @@ func _get_pinky_start_position() -> Vector2:
 func _make_inky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Inky"
+    ghost.animations = INKY_FRAMES
     ghost.global_position = _get_inky_start_position()
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
@@ -126,6 +135,7 @@ func _get_inky_start_position() -> Vector2:
 func _make_clyde() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Clyde"
+    ghost.animations = CLYDE_FRAMES
     ghost.global_position = _get_clyde_start_position()
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze

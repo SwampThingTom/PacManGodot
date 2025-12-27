@@ -13,6 +13,7 @@ enum State {
 
 const CENTER_EPS := 0.05
 
+@export var animations: SpriteFrames
 @export var maze: Maze
 @export var ghost_mode: GhostMode
 @export var pacman: PacMan
@@ -31,12 +32,12 @@ var _next_direction: Vector2i
 
 @onready var anim := $Sprite
 
-
 func _ready():
     _mode = ghost_mode.get_mode()
     ghost_mode.mode_changed.connect(_on_mode_changed)
     _cell = maze.get_cell(position)
     _determine_next_cell()
+    anim.sprite_frames = animations
     anim.animation = "left"
     anim.pause()
 

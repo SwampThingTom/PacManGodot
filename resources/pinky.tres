@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://bdtguaehgi1aj"]
+
+[ext_resource type="Texture2D" uid="uid://cjdmuqjiruf40" path="res://assets/images/sprites.png" id="1_do6gl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3f8nl"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(96, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2whn"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(112, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jyakw"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(32, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2qahc"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(48, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0u2yd"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(0, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sp461"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(16, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a16h8"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(64, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_chtib"]
+atlas = ExtResource("1_do6gl")
+region = Rect2(80, 80, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3f8nl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2whn")
+}],
+"loop": true,
+"name": &"down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jyakw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2qahc")
+}],
+"loop": true,
+"name": &"left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0u2yd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sp461")
+}],
+"loop": true,
+"name": &"right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a16h8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_chtib")
+}],
+"loop": true,
+"name": &"up",
+"speed": 5.0
+}]
