@@ -55,99 +55,69 @@ func _run_intro() -> void:
 
 
 func _spawn_actors() -> void:
-    _pacman = pacman_scene.instantiate()
-    _pacman.global_position = _get_pacman_start_position()
-    _pacman.maze = maze
-    _pacman.pellets = pellets
+    _pacman = _make_pacman()
     add_child(_pacman)
     
-    var blinky := _make_blinky()
-    var pinky := _make_pinky()
-    var inky := _make_inky()
-    var clyde := _make_clyde()
-
-    ghosts.add_child(blinky)    
-    ghosts.add_child(pinky)
-    ghosts.add_child(inky)
-    ghosts.add_child(clyde)
+    # order matters
+    ghosts.add_child(_make_blinky())    
+    ghosts.add_child(_make_pinky())
+    ghosts.add_child(_make_inky())
+    ghosts.add_child(_make_clyde())
 
 
-func _get_pacman_start_position() -> Vector2:
-    var p1: Vector2 = maze.map_to_local(Vector2i(13, 26))
-    var p2: Vector2 = maze.map_to_local(Vector2i(14, 26))
-    return (p1 + p2) * 0.5
-
+func _make_pacman() -> PacMan:
+    var pacman: PacMan = pacman_scene.instantiate()
+    pacman.global_position = maze.get_pacman_start_position()
+    pacman.maze = maze
+    pacman.pellets = pellets
+    return pacman    
 
 func _make_blinky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Blinky"
     ghost.animations = BLINKY_FRAMES
-    ghost.global_position = _get_blinky_start_position()
+    ghost.global_position = maze.get_blinky_start_position()
     ghost.state = Ghost.State.ACTIVE
     ghost.maze = maze
     ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
-    
-
-func _get_blinky_start_position() -> Vector2:
-    var p1: Vector2 = maze.map_to_local(Vector2i(13, 14))
-    var p2: Vector2 = maze.map_to_local(Vector2i(14, 14))
-    return (p1 + p2) * 0.5
 
 
 func _make_pinky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Pinky"
     ghost.animations = PINKY_FRAMES
-    ghost.global_position = _get_pinky_start_position()
+    ghost.global_position = maze.get_pinky_start_position()
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
-    
-
-func _get_pinky_start_position() -> Vector2:
-    var p1: Vector2 = maze.map_to_local(Vector2i(13, 17))
-    var p2: Vector2 = maze.map_to_local(Vector2i(14, 17))
-    return (p1 + p2) * 0.5
 
 
 func _make_inky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Inky"
     ghost.animations = INKY_FRAMES
-    ghost.global_position = _get_inky_start_position()
+    ghost.global_position = maze.get_inky_start_position()
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
-    
-
-func _get_inky_start_position() -> Vector2:
-    var p1: Vector2 = maze.map_to_local(Vector2i(11, 17))
-    var p2: Vector2 = maze.map_to_local(Vector2i(12, 17))
-    return (p1 + p2) * 0.5
 
 
 func _make_clyde() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Clyde"
     ghost.animations = CLYDE_FRAMES
-    ghost.global_position = _get_clyde_start_position()
+    ghost.global_position = maze.get_clyde_start_position()
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
-    
-
-func _get_clyde_start_position() -> Vector2:
-    var p1: Vector2 = maze.map_to_local(Vector2i(15, 17))
-    var p2: Vector2 = maze.map_to_local(Vector2i(16, 17))
-    return (p1 + p2) * 0.5
 
 
 func _on_pellet_eaten(is_power_pellet: bool):

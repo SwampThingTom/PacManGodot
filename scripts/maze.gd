@@ -8,8 +8,11 @@ var _max_x_cell: int = 0
 var _tunnel_min_x: int = 0
 var _tunnel_max_x: int = 0
 
+var _half_tile_size: int
+
 
 func _ready():
+    _half_tile_size = tile_set.tile_size.x / 2
     _calculate_tunnel_coordinates()
 
 
@@ -55,6 +58,51 @@ func _calculate_tunnel_coordinates() -> void:
     _min_x_cell = used.position.x
     _max_x_cell = used.position.x + used.size.x - 1
 
-    var half_tile := tile_set.tile_size.x * 0.5
-    _tunnel_min_x = map_to_local(Vector2i(_min_x_cell, 0)).x - half_tile
-    _tunnel_max_x = map_to_local(Vector2i(_max_x_cell, 0)).x + half_tile
+    _tunnel_min_x = map_to_local(Vector2i(_min_x_cell, 0)).x - _half_tile_size
+    _tunnel_max_x = map_to_local(Vector2i(_max_x_cell, 0)).x + _half_tile_size
+
+
+func get_ghost_home_exit_position() -> Vector2:
+    var pos: Vector2 = map_to_local(Vector2i(13, 14))
+    pos.x += _half_tile_size
+    return pos
+
+
+func get_ghost_home_center_position() -> Vector2:
+    var pos: Vector2 = map_to_local(Vector2i(13, 17))
+    pos.x += _half_tile_size
+    return pos
+
+
+func get_ghost_home_left_position() -> Vector2:
+    var pos: Vector2 = map_to_local(Vector2i(11, 17))
+    pos.x += _half_tile_size
+    return pos
+
+
+func get_ghost_home_right_position() -> Vector2:
+    var pos: Vector2 = map_to_local(Vector2i(15, 17))
+    pos.x += _half_tile_size
+    return pos
+
+
+func get_pacman_start_position() -> Vector2:
+    var pos: Vector2 = map_to_local(Vector2i(13, 26))
+    pos.x += _half_tile_size
+    return pos
+
+
+func get_blinky_start_position() -> Vector2:
+    return get_ghost_home_exit_position()
+
+
+func get_pinky_start_position() -> Vector2:
+    return get_ghost_home_center_position()
+
+
+func get_inky_start_position() -> Vector2:
+    return get_ghost_home_left_position()
+
+
+func get_clyde_start_position() -> Vector2:
+    return get_ghost_home_right_position()
