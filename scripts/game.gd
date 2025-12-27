@@ -78,6 +78,7 @@ func _make_blinky() -> Ghost:
     ghost.name = "Blinky"
     ghost.animations = BLINKY_FRAMES
     ghost.global_position = maze.get_blinky_start_position()
+    ghost.scatter_target = Vector2i(25, 0)
     ghost.state = Ghost.State.ACTIVE
     ghost.maze = maze
     ghost.pacman = _pacman
@@ -90,6 +91,7 @@ func _make_pinky() -> Ghost:
     ghost.name = "Pinky"
     ghost.animations = PINKY_FRAMES
     ghost.global_position = maze.get_pinky_start_position()
+    ghost.scatter_target = Vector2i(2, 0)
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.pacman = _pacman
@@ -102,6 +104,7 @@ func _make_inky() -> Ghost:
     ghost.name = "Inky"
     ghost.animations = INKY_FRAMES
     ghost.global_position = maze.get_inky_start_position()
+    ghost.scatter_target = Vector2i(27, 34)
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.pacman = _pacman
@@ -114,6 +117,7 @@ func _make_clyde() -> Ghost:
     ghost.name = "Clyde"
     ghost.animations = CLYDE_FRAMES
     ghost.global_position = maze.get_clyde_start_position()
+    ghost.scatter_target = Vector2i(0, 34)
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.pacman = _pacman

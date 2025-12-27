@@ -17,8 +17,9 @@ const CENTER_EPS := 0.05
 @export var maze: Maze
 @export var ghost_mode: GhostMode
 @export var pacman: PacMan
-@export var level: int = 1
+@export var scatter_target: Vector2i
 
+var level: int = 1
 var moving: bool = false
 var state := State.IN_HOUSE
 
@@ -153,7 +154,7 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
             continue
 
         var next_cell: Vector2i = from_cell + d
-        var target: Vector2i = _get_target_tile()
+        var target: Vector2i = _get_target_cell()
         var dx := next_cell.x - target.x
         var dy := next_cell.y - target.y
         var score := dx * dx + dy * dy
@@ -169,9 +170,9 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     return best_dir
 
 
-func _get_target_tile() -> Vector2i:
+func _get_target_cell() -> Vector2i:
     if _mode == GhostMode.Mode.SCATTER:
-        return Vector2i(25, 0)
+        return scatter_target
     return pacman.get_cell()
 
 
