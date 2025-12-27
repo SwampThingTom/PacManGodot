@@ -29,6 +29,7 @@ var _direction := Vector2i.LEFT
 var _next_cell: Vector2i
 var _next_cell_center: Vector2
 var _next_direction: Vector2i
+var _direction_when_active: Vector2i
 
 @onready var anim := $Sprite
 
@@ -46,7 +47,7 @@ func _process(delta):
     if not moving:
         return
     
-    if state != State.ACTIVE:
+    if state == State.IN_HOUSE:
         return
     
     var speed: float = _get_speed()
@@ -78,6 +79,18 @@ func stop_moving():
     anim.pause()
 
 
+func leave_house():
+    _direction_when_active = _direction
+    if position == maze.get_ghost_home_center_position():
+        _next_cell_center = maze.get_ghost_home_exit_position()
+        _update_direction(Vector2i.UP)
+    else:
+        _next_cell_center = maze.get_ghost_home_center_position()
+        var direction = Vector2i.LEFT if position.x > _next_cell_center.x else Vector2i.RIGHT
+        _update_direction(direction)
+    state = State.LEAVE_HOUSE
+
+
 func _get_speed():
     if maze.is_in_tunnel(_cell):
         return LevelData.get_ghost_tunnel_speed_pixels(level)
@@ -87,12 +100,32 @@ func _get_speed():
 
 
 func _determine_next_cell() -> void:
+    if state == State.LEAVE_HOUSE:
+        # don't return early, state may change to ACTIVE
+        _determine_next_cell_leaving_house()
+    
+    if state != State.ACTIVE:
+        return
+    
     _next_cell = _cell + _direction
     _next_cell_center = maze.get_center_of_cell(_next_cell)
     _next_direction = _get_next_direction(_next_cell, _direction)
 
 
+func _determine_next_cell_leaving_house() -> void:
+    if position == maze.get_ghost_home_exit_position():
+        _cell = maze.get_cell(position)
+        _direction = _direction_when_active
+        state = State.ACTIVE
+        return
+    
+    _next_cell_center = maze.get_ghost_home_exit_position()
+    _update_direction(Vector2i.UP)
+
+
 func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
+    assert(state == State.ACTIVE, "_get_next_direction only valid for ACTIVE state")
+
     # Ghosts can not move up from these tiles
     var safe_zone_cells: Array[Vector2i] = [
         Vector2i(12, 14), Vector2i(15, 14), Vector2i(12, 26), Vector2i(15, 26)
@@ -158,5 +191,5 @@ func _update_direction(dir: Vector2i):
 func _on_mode_changed(new_mode: GhostMode.Mode):
     if _mode != GhostMode.Mode.FRIGHTENED:
         # Reverse direction when mode changes
-        _next_direction = -_direction
+        _next_direction = -_direction if state == State.ACTIVE else -_direction_when_active
     _mode = new_mode

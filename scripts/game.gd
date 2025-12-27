@@ -50,7 +50,7 @@ func _run_intro() -> void:
     await get_tree().create_timer(ready_duration_sec).timeout
     ready_text.visible = false
     _pacman.start_moving()
-    ghosts.start_moving()
+    ghosts.level_started(1)
     ghost_mode.start(1)
 
 
@@ -58,11 +58,12 @@ func _spawn_actors() -> void:
     _pacman = _make_pacman()
     add_child(_pacman)
     
-    # order matters
-    ghosts.add_child(_make_blinky())    
-    ghosts.add_child(_make_pinky())
-    ghosts.add_child(_make_inky())
-    ghosts.add_child(_make_clyde())
+    ghosts.add_ghosts(
+        _make_blinky(),
+        _make_pinky(),
+        _make_inky(),
+        _make_clyde()
+    )
 
 
 func _make_pacman() -> PacMan:
@@ -123,6 +124,7 @@ func _make_clyde() -> Ghost:
 func _on_pellet_eaten(is_power_pellet: bool):
     var points := 50 if is_power_pellet else 10
     _update_current_player_score(points)
+    ghosts.pellet_eaten()
 
 
 func _update_current_player_score(points: int) -> void:
