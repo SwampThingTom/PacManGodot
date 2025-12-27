@@ -34,6 +34,14 @@ func wrap_cell(cell: Vector2i) -> Vector2i:
     return cell
 
 
+func is_in_tunnel(cell: Vector2i) -> bool:
+    if cell.y != 17:
+        return false
+    if cell.x >= 6 and cell.x <= 21:
+        return false
+    return true
+
+
 func handle_tunnel(pos: Vector2) -> Vector2:
     if pos.x < _tunnel_min_x:
         pos.x = _tunnel_max_x + pos.x - _tunnel_min_x

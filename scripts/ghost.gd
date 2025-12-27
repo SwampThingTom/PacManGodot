@@ -49,7 +49,7 @@ func _process(delta):
     if state != State.ACTIVE:
         return
     
-    var speed: float = LevelData.get_ghost_normal_speed_pixels(level)
+    var speed: float = _get_speed()
     var move_distance: float = speed * delta
     var distance_to_next_cell: float = (_next_cell_center - position).length()
     
@@ -76,6 +76,14 @@ func start_moving():
 func stop_moving():
     moving = false
     anim.pause()
+
+
+func _get_speed():
+    if maze.is_in_tunnel(_cell):
+        return LevelData.get_ghost_tunnel_speed_pixels(level)
+    if _mode == GhostMode.Mode.FRIGHTENED:
+        return LevelData.get_ghost_fright_speed_pixels(level)
+    return LevelData.get_ghost_normal_speed_pixels(level)
 
 
 func _determine_next_cell() -> void:
