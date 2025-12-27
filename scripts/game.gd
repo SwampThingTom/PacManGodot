@@ -167,3 +167,5 @@ func _update_current_player_score(points: int) -> void:
 
 func _on_all_pellets_eaten():
     print("Level Complete!")
+    _pacman.stop_moving()
+    ghosts.level_ended()

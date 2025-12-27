@@ -54,6 +54,11 @@ func level_started(level: int) -> void:
         _next_ghost += 1
 
 
+func level_ended() -> void:
+    for ghost in _ghosts:
+        ghost.stop_moving()
+
+
 func pellet_eaten() -> void:
     var pellet_limit = _get_pellet_limit(_next_ghost)
     if pellet_limit == -1:

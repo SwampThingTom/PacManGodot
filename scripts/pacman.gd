@@ -22,7 +22,7 @@ var _pause_frames: int = 0
 func _ready():
     anim.animation = "left"
     anim.pause()
-    _connect_signals()
+    pellets.pellet_eaten.connect(_on_pellet_eaten)
     
     if dbg.visible:
         dbg.maze = maze
@@ -79,11 +79,6 @@ func get_direction() -> Vector2i:
     return _direction
 
 
-func _connect_signals() -> void:
-    pellets.pellet_eaten.connect(_on_pellet_eaten)
-    pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
-
-
 func _handle_input() -> void:
     if Input.is_action_just_pressed("move_left"):
         _desired_direction = Vector2i.LEFT
@@ -121,7 +116,3 @@ func _update_direction(dir: Vector2i):
 
 func _on_pellet_eaten(is_power_pellet: bool):
     _pause_frames = 3 if is_power_pellet else 1
-
-
-func _on_all_pellets_eaten():
-    stop_moving()
