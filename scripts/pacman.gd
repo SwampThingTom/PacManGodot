@@ -61,18 +61,22 @@ func _process(delta):
     position = maze.handle_tunnel(position)
 
 
-func start_moving():
+func start_moving() -> void:
     moving = true
     anim.play()
 
 
-func stop_moving():
+func stop_moving() -> void:
     moving = false
     anim.pause()
 
 
-func get_cell():
+func get_cell() -> Vector2i:
     return _cell
+
+
+func get_direction() -> Vector2i:
+    return _direction
 
 
 func _connect_signals() -> void:

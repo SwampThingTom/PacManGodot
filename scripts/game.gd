@@ -73,15 +73,16 @@ func _make_pacman() -> PacMan:
     pacman.pellets = pellets
     return pacman    
 
+
 func _make_blinky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Blinky"
     ghost.animations = BLINKY_FRAMES
     ghost.global_position = maze.get_blinky_start_position()
+    ghost.chase_target = _get_blinky_chase_target
     ghost.scatter_target = Vector2i(25, 0)
     ghost.state = Ghost.State.ACTIVE
     ghost.maze = maze
-    ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
 
@@ -91,10 +92,10 @@ func _make_pinky() -> Ghost:
     ghost.name = "Pinky"
     ghost.animations = PINKY_FRAMES
     ghost.global_position = maze.get_pinky_start_position()
+    ghost.chase_target = _get_pinky_chase_target
     ghost.scatter_target = Vector2i(2, 0)
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
-    ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
 
@@ -104,10 +105,10 @@ func _make_inky() -> Ghost:
     ghost.name = "Inky"
     ghost.animations = INKY_FRAMES
     ghost.global_position = maze.get_inky_start_position()
+    ghost.chase_target = _get_inky_chase_target
     ghost.scatter_target = Vector2i(27, 34)
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
-    ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
 
@@ -117,12 +118,35 @@ func _make_clyde() -> Ghost:
     ghost.name = "Clyde"
     ghost.animations = CLYDE_FRAMES
     ghost.global_position = maze.get_clyde_start_position()
+    ghost.chase_target = _get_clyde_chase_target
     ghost.scatter_target = Vector2i(0, 34)
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
-    ghost.pacman = _pacman
     ghost.ghost_mode = ghost_mode
     return ghost
+
+
+func _get_blinky_chase_target() -> Vector2i:
+    return _pacman.get_cell()
+
+
+func _get_pinky_chase_target() -> Vector2i:
+    # TODO: implement original game bug
+    return _pacman.get_cell() + _pacman.get_direction() * 4
+
+
+func _get_inky_chase_target() -> Vector2i:
+    # TODO: implement original game bug
+    var target_cell: Vector2i = _pacman.get_cell() + _pacman.get_direction() * 2
+    var blinky_cell: Vector2i = ghosts.get_ghost(Ghosts.GhostId.BLINKY).get_cell()
+    var vector: Vector2i = (target_cell - blinky_cell) * 2
+    return blinky_cell + vector
+
+
+func _get_clyde_chase_target() -> Vector2i:
+    var clyde: Ghost = ghosts.get_ghost(Ghosts.GhostId.CLYDE)
+    var distance = clyde.get_cell().distance_to(_pacman.get_cell())
+    return _pacman.get_cell() if distance >= 8.0 else clyde.scatter_target
 
 
 func _on_pellet_eaten(is_power_pellet: bool):

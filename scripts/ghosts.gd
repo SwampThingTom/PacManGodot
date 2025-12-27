@@ -37,6 +37,10 @@ func add_ghosts(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> void:
     add_child(clyde)
 
 
+func get_ghost(ghost_id: GhostId) -> Ghost:
+    return _ghosts[ghost_id]
+
+
 func level_started(level: int) -> void:
     for ghost in _ghosts:
         ghost.start_moving()

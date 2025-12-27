@@ -16,7 +16,7 @@ const CENTER_EPS := 0.05
 @export var animations: SpriteFrames
 @export var maze: Maze
 @export var ghost_mode: GhostMode
-@export var pacman: PacMan
+@export var chase_target: Callable # returns a Vector2i for target cell
 @export var scatter_target: Vector2i
 
 var level: int = 1
@@ -70,14 +70,18 @@ func _process(delta):
     _determine_next_cell()
 
 
-func start_moving():
+func start_moving() -> void:
     moving = true
     anim.play()
 
 
-func stop_moving():
+func stop_moving() -> void:
     moving = false
     anim.pause()
+
+
+func get_cell() -> Vector2i:
+    return _cell
 
 
 func leave_house():
@@ -139,6 +143,7 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     from_cell = maze.wrap_cell(from_cell)
     var is_safe_cell := safe_zone_cells.has(from_cell)
 
+    var target: Vector2i = _get_target_cell()
     var best_dir: Vector2i = dir
     var best_score := INF
 
@@ -154,7 +159,6 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
             continue
 
         var next_cell: Vector2i = from_cell + d
-        var target: Vector2i = _get_target_cell()
         var dx := next_cell.x - target.x
         var dy := next_cell.y - target.y
         var score := dx * dx + dy * dy
@@ -173,7 +177,7 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
 func _get_target_cell() -> Vector2i:
     if _mode == GhostMode.Mode.SCATTER:
         return scatter_target
-    return pacman.get_cell()
+    return chase_target.call()
 
 
 func _update_direction(dir: Vector2i):
