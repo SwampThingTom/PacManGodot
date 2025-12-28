@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://c0kw5cc3uo1ml" path="res://scripts/ghosts.gd" id="10_vtaks"]
 
 [node name="Game" type="Node2D"]
+process_priority = 100
 position = Vector2(624, 108)
 scale = Vector2(3, 3)
 script = ExtResource("1_yqjtg")

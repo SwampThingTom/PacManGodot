@@ -49,19 +49,18 @@ func _process(delta: float) -> void:
         mode_changed.emit(_mode)
 
 
-func reset_to_level(level: int) -> void:
+func start(level: int) -> void:
+    assert(not _running, "Ghost Mode timer is already running.")
+    _running = true
     _level = level
     _mode_index = 0
     _mode = Mode.SCATTER
     _duration = _get_duration(_level)
 
 
-func start() -> void:
-    _running = true
-
-
-func pause() -> void:
+func stop() -> void:
     _running = false
+    _mode = Mode.SCATTER
 
 
 func get_mode() -> Mode:

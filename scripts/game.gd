@@ -42,6 +42,20 @@ func _ready() -> void:
     _start_level(1)
     
 
+func _process(delta: float) -> void:
+    if _state != State.PLAYING:
+        return
+    
+    # This assumes that all other nodes have already been processed this frame.
+    # (i.e., process_priority of this node is larger than other nodes)
+    var pacman_cell: Vector2i = _pacman.get_cell()
+    for ghost in ghosts.get_ghosts():
+        if ghost.state != Ghost.State.ACTIVE:
+            continue
+        
+        if ghost.get_cell() == pacman_cell:
+            _handle_collision(ghost)
+            return
 
 
 func _reset_scores() -> void:
@@ -71,7 +85,6 @@ func _connect_signals() -> void:
 func _start_level(level: int) -> void:
     _level = level
     ghosts.reset_to_level(_level)
-    ghost_mode.reset_to_level(_level)
     _run_intro()
 
 
@@ -87,13 +100,35 @@ func _run_intro() -> void:
     ready_text.hide()
     _pacman.start_moving()
     ghosts.start_round()
-    ghost_mode.start()
+    ghost_mode.start(_level)
+
+
+func _handle_collision(ghost: Ghost) -> void:
+    if ghost_mode.get_mode() != GhostMode.Mode.FRIGHTENED:
+        _handle_pacman_death()
+
+
+func _handle_pacman_death() -> void:
+    _state = State.DYING
+    _stop_actors()
+    ghosts.on_life_lost()
+    await get_tree().create_timer(1.0).timeout
+
+    ghosts.hide_all()
+    # TODO: await _pacman.play_death_animation()
+    await get_tree().create_timer(1.0).timeout
+
+    _pacman.hide()
+    await get_tree().create_timer(1.0).timeout
+
+    _reset_actors()
+    _run_intro()
 
 
 func _stop_actors() -> void:
     _pacman.stop_moving()
     ghosts.stop_moving()
-    ghost_mode.pause()
+    ghost_mode.stop()
 
 
 func _show_actors() -> void:

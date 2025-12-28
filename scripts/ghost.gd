@@ -24,6 +24,8 @@ var moving: bool = false
 var state := State.IN_HOUSE
 
 var _start_position: Vector2
+var _start_state: State
+
 var _mode: GhostMode.Mode
 var _cell: Vector2i
 var _direction := Vector2i.LEFT
@@ -37,6 +39,7 @@ var _direction_when_active: Vector2i
 
 func _ready():
     _start_position = position
+    _start_state = state
     _mode = ghost_mode.get_mode()
     ghost_mode.mode_changed.connect(_on_mode_changed)
     _cell = maze.get_cell(position)
@@ -67,8 +70,11 @@ func _process(delta):
     position = _next_cell_center
     position = maze.handle_tunnel(position)
     _cell = maze.get_cell(position)
-    assert(maze.is_open(_cell, _next_direction))
-    _update_direction(_next_direction)
+    
+    if state == State.ACTIVE:
+        assert(maze.is_open(_cell, _next_direction))
+        _update_direction(_next_direction)
+
     _determine_next_cell()
 
 
@@ -84,7 +90,11 @@ func stop_moving() -> void:
 
 func reset_to_start_position() -> void:
     position = _start_position
-    state = State.IN_HOUSE
+    state = _start_state
+    _mode = ghost_mode.get_mode()
+    _cell = maze.get_cell(position)
+    _update_direction(Vector2i.LEFT)
+    _determine_next_cell()
 
 
 func get_cell() -> Vector2i:
