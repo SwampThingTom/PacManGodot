@@ -23,6 +23,7 @@ var level: int = 1
 var moving: bool = false
 var state := State.IN_HOUSE
 
+var _start_position: Vector2
 var _mode: GhostMode.Mode
 var _cell: Vector2i
 var _direction := Vector2i.LEFT
@@ -35,6 +36,7 @@ var _direction_when_active: Vector2i
 @onready var anim := $Sprite
 
 func _ready():
+    _start_position = position
     _mode = ghost_mode.get_mode()
     ghost_mode.mode_changed.connect(_on_mode_changed)
     _cell = maze.get_cell(position)
@@ -76,8 +78,13 @@ func start_moving() -> void:
 
 
 func stop_moving() -> void:
+    # don't stop animations here
     moving = false
-    anim.pause()
+
+
+func reset_to_start_position() -> void:
+    position = _start_position
+    state = State.IN_HOUSE
 
 
 func get_cell() -> Vector2i:

@@ -14,6 +14,7 @@ const CLYDE_FRAMES  := preload("res://resources/clyde.tres")
 @export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
 @export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
 
+var _level: int = 1
 var _current_player: int = 0
 var _scores: Array[int] = [0, 0]
 var _high_score: int = 0
@@ -29,8 +30,11 @@ var _pacman: PacMan
 
 func _ready() -> void:
     _reset_scores()
+    _spawn_actors()
     _connect_signals()
-    _run_intro()
+    _start_level(1)
+    
+
 
 
 func _reset_scores() -> void:
@@ -38,23 +42,9 @@ func _reset_scores() -> void:
     scores_text.clear_player_score(0)
 
 
-func _connect_signals() -> void:
-    pellets.pellet_eaten.connect(_on_pellet_eaten)
-    pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
-
-
-func _run_intro() -> void:
-    ready_text.visible = true
-    await get_tree().create_timer(spawn_duration_sec).timeout
-    _spawn_actors()
-    await get_tree().create_timer(ready_duration_sec).timeout
-    ready_text.visible = false
-    _pacman.start_moving()
-    ghosts.level_started(1)
-    ghost_mode.start(1)
-
-
 func _spawn_actors() -> void:
+    assert(_pacman == null, "Actors already spawned")
+
     _pacman = _make_pacman()
     add_child(_pacman)
     
@@ -66,11 +56,76 @@ func _spawn_actors() -> void:
     )
 
 
+func _connect_signals() -> void:
+    pellets.pellet_eaten.connect(_on_pellet_eaten)
+    pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
+
+
+func _start_level(level: int) -> void:
+    _level = level
+    ghosts.reset_to_level(_level)
+    ghost_mode.reset_to_level(_level)
+    _run_intro()
+
+
+func _run_intro() -> void:
+    ready_text.show()
+    await get_tree().create_timer(spawn_duration_sec).timeout
+
+    _show_actors()
+    await get_tree().create_timer(ready_duration_sec).timeout
+
+    ready_text.hide()
+    _pacman.start_moving()
+    ghosts.start_round()
+    ghost_mode.start()
+
+
+func _stop_actors() -> void:
+    _pacman.stop_moving()
+    ghosts.stop_moving()
+    ghost_mode.pause()
+
+
+func _show_actors() -> void:
+    _pacman.show()
+    ghosts.show_all()
+
+
+func _reset_actors() -> void:
+    _pacman.reset_to_start_position()
+    ghosts.reset_to_start_positions()
+
+
+func _on_pellet_eaten(is_power_pellet: bool):
+    var points := 50 if is_power_pellet else 10
+    _update_current_player_score(points)
+    ghosts.pellet_eaten()
+
+
+func _on_all_pellets_eaten():
+    print("Level Complete!")
+    _stop_actors()
+
+
+func _update_current_player_score(points: int) -> void:
+    _scores[_current_player] += points
+    var current_score := _scores[_current_player]
+    scores_text.draw_player_score(_current_player, current_score)
+    
+    if current_score > _high_score:
+        _high_score = current_score
+        scores_text.draw_high_score(current_score)
+
+
+# Factory methods to instantiate actors
+
 func _make_pacman() -> PacMan:
     var pacman: PacMan = pacman_scene.instantiate()
     pacman.global_position = maze.get_pacman_start_position()
     pacman.maze = maze
     pacman.pellets = pellets
+    pacman.hide()
     return pacman    
 
 
@@ -84,6 +139,7 @@ func _make_blinky() -> Ghost:
     ghost.state = Ghost.State.ACTIVE
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
+    ghost.hide()
     return ghost
 
 
@@ -97,6 +153,7 @@ func _make_pinky() -> Ghost:
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
+    ghost.hide()
     return ghost
 
 
@@ -110,6 +167,7 @@ func _make_inky() -> Ghost:
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
+    ghost.hide()
     return ghost
 
 
@@ -123,6 +181,7 @@ func _make_clyde() -> Ghost:
     ghost.state = Ghost.State.IN_HOUSE
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
+    ghost.hide()
     return ghost
 
 
@@ -147,25 +206,3 @@ func _get_clyde_chase_target() -> Vector2i:
     var clyde: Ghost = ghosts.get_ghost(Ghosts.GhostId.CLYDE)
     var distance = clyde.get_cell().distance_to(_pacman.get_cell())
     return _pacman.get_cell() if distance >= 8.0 else clyde.scatter_target
-
-
-func _on_pellet_eaten(is_power_pellet: bool):
-    var points := 50 if is_power_pellet else 10
-    _update_current_player_score(points)
-    ghosts.pellet_eaten()
-
-
-func _update_current_player_score(points: int) -> void:
-    _scores[_current_player] += points
-    var current_score := _scores[_current_player]
-    scores_text.draw_player_score(_current_player, current_score)
-    
-    if current_score > _high_score:
-        _high_score = current_score
-        scores_text.draw_high_score(current_score)
-
-
-func _on_all_pellets_eaten():
-    print("Level Complete!")
-    _pacman.stop_moving()
-    ghosts.level_ended()

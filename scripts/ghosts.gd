@@ -37,26 +37,50 @@ func add_ghosts(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> void:
     add_child(clyde)
 
 
+func get_ghosts() -> Array[Ghost]:
+    return _ghosts
+
+
 func get_ghost(ghost_id: GhostId) -> Ghost:
     return _ghosts[ghost_id]
 
 
-func level_started(level: int) -> void:
-    for ghost in _ghosts:
-        ghost.start_moving()
-    
+func reset_to_level(level: int) -> void:
     _level_index = level - 1
     _pellet_count = 0
     _next_ghost = GhostId.PINKY
 
+
+func start_round() -> void:
+    start_moving()    
     while _get_pellet_limit(_next_ghost) == 0:
         _queue_leave_house(_next_ghost)
         _next_ghost += 1
 
 
-func level_ended() -> void:
+func start_moving() -> void:
+    for ghost in _ghosts:
+        ghost.start_moving()
+
+    
+func stop_moving() -> void:
     for ghost in _ghosts:
         ghost.stop_moving()
+
+
+func show_all() -> void:
+    for ghost in _ghosts:
+        ghost.show()
+
+
+func hide_all() -> void:
+    for ghost in _ghosts:
+        ghost.hide()
+
+
+func reset_to_start_positions() -> void:
+    for ghost in _ghosts:
+        ghost.reset_to_start_position()
 
 
 func pellet_eaten() -> void:

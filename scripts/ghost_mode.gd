@@ -49,16 +49,18 @@ func _process(delta: float) -> void:
         mode_changed.emit(_mode)
 
 
-func start(level: int) -> void:
-    assert(not _running, "Ghost Mode has already started")
-    _running = true
+func reset_to_level(level: int) -> void:
     _level = level
     _mode_index = 0
     _mode = Mode.SCATTER
     _duration = _get_duration(_level)
 
 
-func stop() -> void:
+func start() -> void:
+    _running = true
+
+
+func pause() -> void:
     _running = false
 
 

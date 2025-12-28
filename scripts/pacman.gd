@@ -14,12 +14,14 @@ var _cell := Vector2i.ZERO
 var _direction := Vector2i.LEFT
 var _desired_direction := Vector2i.ZERO
 var _pause_frames: int = 0
+var _start_position: Vector2
 
 @onready var anim := $Sprite
 @onready var dbg := $DebugDraw
 
 
 func _ready():
+    _start_position = position
     anim.animation = "left"
     anim.pause()
     pellets.pellet_eaten.connect(_on_pellet_eaten)
@@ -68,6 +70,15 @@ func start_moving() -> void:
 
 func stop_moving() -> void:
     moving = false
+    anim.pause()
+
+
+func reset_to_start_position() -> void:
+    position = _start_position
+    _direction = Vector2i.LEFT
+    _desired_direction = Vector2i.ZERO
+    _pause_frames = 0
+    anim.animation = "left"
     anim.pause()
 
 
