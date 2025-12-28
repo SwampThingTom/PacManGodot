@@ -109,7 +109,7 @@ func _reset_actors() -> void:
 func _on_pellet_eaten(is_power_pellet: bool):
     var points := 50 if is_power_pellet else 10
     _update_current_player_score(points)
-    ghosts.pellet_eaten()
+    ghosts.on_pellet_eaten()
 
 
 func _on_all_pellets_eaten():
