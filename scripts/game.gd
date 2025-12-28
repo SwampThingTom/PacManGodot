@@ -3,7 +3,13 @@ extends Node2D
 ##
 ## Tracks number of players, current player, scores, and level.
 
-const GHOST_SCENE := preload("res://scenes/ghost.tscn")
+enum State {
+    GET_READY,
+    PLAYING,
+    DYING,
+    GAME_OVER
+}
+
 const BLINKY_FRAMES := preload("res://resources/blinky.tres")
 const PINKY_FRAMES  := preload("res://resources/pinky.tres")
 const INKY_FRAMES   := preload("res://resources/inky.tres")
@@ -15,6 +21,7 @@ const CLYDE_FRAMES  := preload("res://resources/clyde.tres")
 @export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
 
 var _level: int = 1
+var _state: State
 var _current_player: int = 0
 var _scores: Array[int] = [0, 0]
 var _high_score: int = 0
@@ -69,12 +76,14 @@ func _start_level(level: int) -> void:
 
 
 func _run_intro() -> void:
+    _state = State.GET_READY
     ready_text.show()
     await get_tree().create_timer(spawn_duration_sec).timeout
 
     _show_actors()
     await get_tree().create_timer(ready_duration_sec).timeout
 
+    _state = State.PLAYING
     ready_text.hide()
     _pacman.start_moving()
     ghosts.start_round()
@@ -105,6 +114,7 @@ func _on_pellet_eaten(is_power_pellet: bool):
 
 func _on_all_pellets_eaten():
     print("Level Complete!")
+    _state = State.GAME_OVER
     _stop_actors()
 
 
