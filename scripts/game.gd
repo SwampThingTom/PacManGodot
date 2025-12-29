@@ -14,13 +14,6 @@ enum State {
     GAME_OVER,
 }
 
-const BLINKY_FRAMES := preload("res://resources/blinky.tres")
-const PINKY_FRAMES  := preload("res://resources/pinky.tres")
-const INKY_FRAMES   := preload("res://resources/inky.tres")
-const CLYDE_FRAMES  := preload("res://resources/clyde.tres")
-
-@export var pacman_scene: PackedScene
-@export var ghost_scene: PackedScene
 @export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
 @export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
 
@@ -203,10 +196,17 @@ func _reset_scores() -> void:
 
 func _spawn_actors() -> void:
     assert(_pacman == null, "Actors already spawned")
-    _pacman = _make_pacman()
+    var actor_factory := ActorFactory.new(maze)
+
+    _pacman = actor_factory.make_pacman(pellets)
     add_child(_pacman)
+
     _targeting = GhostTargeting.new(_pacman, ghosts, false)
-    ghosts.on_start_game(_make_blinky(), _make_pinky(), _make_inky(), _make_clyde())
+    ghosts.on_start_game(
+        actor_factory.make_blinky(ghost_mode, _targeting), 
+        actor_factory.make_pinky(ghost_mode, _targeting), 
+        actor_factory.make_inky(ghost_mode, _targeting), 
+        actor_factory.make_clyde(ghost_mode, _targeting))
 
 
 func _connect_signals() -> void:
@@ -222,63 +222,3 @@ func _update_current_player_score(points: int) -> void:
     if current_score > _high_score:
         _high_score = current_score
         scores_text.draw_high_score(current_score)
-
-
-# -----------------------------------------------
-# Instantiate Actors
-# -----------------------------------------------
-
-func _make_pacman() -> PacMan:
-    var pacman: PacMan = pacman_scene.instantiate()
-    pacman.maze = maze
-    pacman.pellets = pellets
-    pacman.hide()
-    return pacman    
-
-
-func _make_blinky() -> Ghost:
-    var ghost: Ghost = ghost_scene.instantiate()
-    ghost.name = "Blinky"
-    ghost.animations = BLINKY_FRAMES
-    ghost.chase_target = _targeting.blinky_chase_target
-    ghost.scatter_target = maze.get_blinky_scatter_target()
-    ghost.maze = maze
-    ghost.ghost_mode = ghost_mode
-    ghost.hide()
-    return ghost
-
-
-func _make_pinky() -> Ghost:
-    var ghost: Ghost = ghost_scene.instantiate()
-    ghost.name = "Pinky"
-    ghost.animations = PINKY_FRAMES
-    ghost.chase_target = _targeting.pinky_chase_target
-    ghost.scatter_target = maze.get_pinky_scatter_target()
-    ghost.maze = maze
-    ghost.ghost_mode = ghost_mode
-    ghost.hide()
-    return ghost
-
-
-func _make_inky() -> Ghost:
-    var ghost: Ghost = ghost_scene.instantiate()
-    ghost.name = "Inky"
-    ghost.animations = INKY_FRAMES
-    ghost.chase_target = _targeting.inky_chase_target
-    ghost.scatter_target = maze.get_inky_scatter_target()
-    ghost.maze = maze
-    ghost.ghost_mode = ghost_mode
-    ghost.hide()
-    return ghost
-
-
-func _make_clyde() -> Ghost:
-    var ghost: Ghost = ghost_scene.instantiate()
-    ghost.name = "Clyde"
-    ghost.animations = CLYDE_FRAMES
-    ghost.chase_target = _targeting.clyde_chase_target
-    ghost.scatter_target = maze.get_clyde_scatter_target()
-    ghost.maze = maze
-    ghost.ghost_mode = ghost_mode
-    ghost.hide()
-    return ghost
