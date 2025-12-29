@@ -13,7 +13,7 @@ enum Mode {
 static var _mode_durations: Array[Array] = []
 
 var _running := false
-var _level: int = 0
+var _level_index: int = 0
 var _mode_index: int = 0
 var _mode = Mode.SCATTER
 var _duration: float = 0.0
@@ -45,34 +45,52 @@ func _process(delta: float) -> void:
     if _duration <= 0.0:
         _mode = Mode.CHASE if mode == Mode.SCATTER else Mode.SCATTER
         _mode_index += 1
-        _duration = _get_duration(_level)
+        _duration = _get_duration()
         mode_changed.emit(_mode)
 
 
-func start(level: int) -> void:
-    assert(not _running, "Ghost Mode timer is already running.")
-    _running = true
-    _level = level
+# -----------------------------------------------
+# Game Lifecycle
+# -----------------------------------------------
+
+func on_start_level(level: int) -> void:
+    _level_index = _get_level_index(level)
+
+
+func on_start_round() -> void:
     _mode_index = 0
     _mode = Mode.SCATTER
-    _duration = _get_duration(_level)
+    _duration = _get_duration()
+    
+
+func on_playing() -> void:
+    _running = true
 
 
-func stop() -> void:
+func on_player_died() -> void:
     _running = false
-    _mode = Mode.SCATTER
 
+
+func on_level_complete() -> void:
+    _running = false
+
+
+# -----------------------------------------------
+# Public Methods
+# -----------------------------------------------
 
 func get_mode() -> Mode:
     return _mode if not _is_frightened else Mode.FRIGHTENED
 
 
-func _get_duration(level: int) -> float:
-    if _mode_index >= _mode_durations[0].size():
-        return 0.0 
+# -----------------------------------------------
+# Helpers
+# -----------------------------------------------
 
-    var level_index: int = _get_level_index(level)
-    return _mode_durations[level_index][_mode_index]
+func _get_duration() -> float:
+    if _mode_index >= _mode_durations[0].size():
+        return 0.0
+    return _mode_durations[_level_index][_mode_index]
 
 
 func _get_level_index(level: int) -> int:

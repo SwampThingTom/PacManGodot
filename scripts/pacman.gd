@@ -6,33 +6,27 @@ extends Node2D
 
 @export var maze: Maze
 @export var pellets: Pellets
-@export var level: int = 1
 
-var moving: bool = false
-
+var _is_playing: bool = false
+var _level: int = 1
 var _cell := Vector2i.ZERO
 var _direction := Vector2i.LEFT
 var _desired_direction := Vector2i.ZERO
 var _pause_frames: int = 0
-var _start_position: Vector2
 
 @onready var anim := $Sprite
 @onready var dbg := $DebugDraw
 
 
 func _ready():
-    _start_position = position
-    anim.animation = "left"
-    anim.pause()
     pellets.pellet_eaten.connect(_on_pellet_eaten)
-    
     if dbg.visible:
         dbg.maze = maze
         dbg.pacman = self
 
 
 func _process(delta):
-    if not moving:
+    if not _is_playing:
         return
     
     # Always handle input even when pausing movement
@@ -46,7 +40,7 @@ func _process(delta):
     pellets.try_eat_pellet(_cell)
     
     # TODO: Needed in case all pellets are eaten. Try to get rid of this.
-    if not moving:
+    if not _is_playing:
         return
     
     if _can_change_direction(_desired_direction):
@@ -58,29 +52,46 @@ func _process(delta):
         return
 
     anim.play()
-    var speed: float = LevelData.get_pacman_normal_speed_pixels(level)
+    var speed: float = LevelData.get_pacman_normal_speed_pixels(_level)
     position += _direction * speed * delta
     position = maze.handle_tunnel(position)
 
 
-func start_moving() -> void:
-    moving = true
+# -----------------------------------------------
+# Game Lifecycle
+# -----------------------------------------------
+
+func on_start_level(level: int) -> void:
+    _level = level
+
+
+func on_start_round() -> void:
+    position = maze.get_pacman_start_position()
+    _cell = maze.get_cell(position)
+    _update_direction(Vector2i.LEFT)
+    _desired_direction = Vector2i.ZERO
+    _pause_frames = 0
+    anim.pause()
+
+
+func on_playing() -> void:
+    _is_playing = true
     anim.play()
 
 
-func stop_moving() -> void:
-    moving = false
+func on_player_died() -> void:
+    _is_playing = false
     anim.pause()
 
 
-func reset_to_start_position() -> void:
-    position = _start_position
-    _direction = Vector2i.LEFT
-    _desired_direction = Vector2i.ZERO
-    _pause_frames = 0
-    anim.animation = "left"
+func on_level_complete() -> void:
+    _is_playing = false
     anim.pause()
 
+
+# -----------------------------------------------
+# Public Methods
+# -----------------------------------------------
 
 func get_cell() -> Vector2i:
     return _cell
@@ -89,6 +100,18 @@ func get_cell() -> Vector2i:
 func get_direction() -> Vector2i:
     return _direction
 
+
+# -----------------------------------------------
+# Event Handlers
+# -----------------------------------------------
+
+func _on_pellet_eaten(is_power_pellet: bool):
+    _pause_frames = 3 if is_power_pellet else 1
+
+
+# -----------------------------------------------
+# Helpers
+# -----------------------------------------------
 
 func _handle_input() -> void:
     if Input.is_action_just_pressed("move_left"):
@@ -123,7 +146,3 @@ func _update_direction(dir: Vector2i):
             anim.play("up")
         Vector2i.DOWN:
             anim.play("down")    
-
-
-func _on_pellet_eaten(is_power_pellet: bool):
-    _pause_frames = 3 if is_power_pellet else 1

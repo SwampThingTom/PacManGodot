@@ -38,5 +38,6 @@ tile_set = ExtResource("5_p57ef")
 [node name="GhostMode" type="Node" parent="."]
 script = ExtResource("9_0tnpc")
 
-[node name="Ghosts" type="Node2D" parent="."]
+[node name="Ghosts" type="Node2D" parent="." node_paths=PackedStringArray("maze")]
 script = ExtResource("10_vtaks")
+maze = NodePath("../Maze")
