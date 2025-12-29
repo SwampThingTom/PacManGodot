@@ -115,3 +115,19 @@ func get_inky_start_position() -> Vector2:
 
 func get_clyde_start_position() -> Vector2:
     return get_ghost_home_right_position()
+
+
+func get_blinky_scatter_target() -> Vector2i:
+    return Vector2i(25, 0)
+
+
+func get_pinky_scatter_target() -> Vector2i:
+    return Vector2i(2, 0)
+
+
+func get_inky_scatter_target() -> Vector2i:
+    return Vector2i(27, 34)
+
+
+func get_clyde_scatter_target() -> Vector2i:
+    return Vector2i(0, 34)

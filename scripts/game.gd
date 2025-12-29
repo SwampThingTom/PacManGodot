@@ -239,7 +239,7 @@ func _make_blinky() -> Ghost:
     ghost.name = "Blinky"
     ghost.animations = BLINKY_FRAMES
     ghost.chase_target = _get_blinky_chase_target
-    ghost.scatter_target = Vector2i(25, 0)
+    ghost.scatter_target = maze.get_blinky_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
     ghost.hide()
@@ -251,7 +251,7 @@ func _make_pinky() -> Ghost:
     ghost.name = "Pinky"
     ghost.animations = PINKY_FRAMES
     ghost.chase_target = _get_pinky_chase_target
-    ghost.scatter_target = Vector2i(2, 0)
+    ghost.scatter_target = maze.get_pinky_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
     ghost.hide()
@@ -263,7 +263,7 @@ func _make_inky() -> Ghost:
     ghost.name = "Inky"
     ghost.animations = INKY_FRAMES
     ghost.chase_target = _get_inky_chase_target
-    ghost.scatter_target = Vector2i(27, 34)
+    ghost.scatter_target = maze.get_inky_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
     ghost.hide()
@@ -275,7 +275,7 @@ func _make_clyde() -> Ghost:
     ghost.name = "Clyde"
     ghost.animations = CLYDE_FRAMES
     ghost.chase_target = _get_clyde_chase_target
-    ghost.scatter_target = Vector2i(0, 34)
+    ghost.scatter_target = maze.get_clyde_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
     ghost.hide()
