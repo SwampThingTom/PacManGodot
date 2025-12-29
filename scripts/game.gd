@@ -30,6 +30,7 @@ var _current_player: int = 0
 var _high_score: int = 0
 var _scores: Array[int]
 var _pacman: PacMan
+var _targeting: GhostTargeting
 
 @onready var maze := $Maze
 @onready var pellets: Pellets = $Pellets
@@ -204,6 +205,7 @@ func _spawn_actors() -> void:
     assert(_pacman == null, "Actors already spawned")
     _pacman = _make_pacman()
     add_child(_pacman)
+    _targeting = GhostTargeting.new(_pacman, ghosts, false)
     ghosts.on_start_game(_make_blinky(), _make_pinky(), _make_inky(), _make_clyde())
 
 
@@ -238,7 +240,7 @@ func _make_blinky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Blinky"
     ghost.animations = BLINKY_FRAMES
-    ghost.chase_target = _get_blinky_chase_target
+    ghost.chase_target = _targeting.blinky_chase_target
     ghost.scatter_target = maze.get_blinky_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
@@ -250,7 +252,7 @@ func _make_pinky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Pinky"
     ghost.animations = PINKY_FRAMES
-    ghost.chase_target = _get_pinky_chase_target
+    ghost.chase_target = _targeting.pinky_chase_target
     ghost.scatter_target = maze.get_pinky_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
@@ -262,7 +264,7 @@ func _make_inky() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Inky"
     ghost.animations = INKY_FRAMES
-    ghost.chase_target = _get_inky_chase_target
+    ghost.chase_target = _targeting.inky_chase_target
     ghost.scatter_target = maze.get_inky_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
@@ -274,32 +276,9 @@ func _make_clyde() -> Ghost:
     var ghost: Ghost = ghost_scene.instantiate()
     ghost.name = "Clyde"
     ghost.animations = CLYDE_FRAMES
-    ghost.chase_target = _get_clyde_chase_target
+    ghost.chase_target = _targeting.clyde_chase_target
     ghost.scatter_target = maze.get_clyde_scatter_target()
     ghost.maze = maze
     ghost.ghost_mode = ghost_mode
     ghost.hide()
     return ghost
-
-
-func _get_blinky_chase_target() -> Vector2i:
-    return _pacman.get_cell()
-
-
-func _get_pinky_chase_target() -> Vector2i:
-    # TODO: implement original game bug
-    return _pacman.get_cell() + _pacman.get_direction() * 4
-
-
-func _get_inky_chase_target() -> Vector2i:
-    # TODO: implement original game bug
-    var target_cell: Vector2i = _pacman.get_cell() + _pacman.get_direction() * 2
-    var blinky_cell: Vector2i = ghosts.get_ghost(Ghosts.GhostId.BLINKY).get_cell()
-    var vector: Vector2i = (target_cell - blinky_cell) * 2
-    return blinky_cell + vector
-
-
-func _get_clyde_chase_target() -> Vector2i:
-    var clyde: Ghost = ghosts.get_ghost(Ghosts.GhostId.CLYDE)
-    var distance = clyde.get_cell().distance_to(_pacman.get_cell())
-    return _pacman.get_cell() if distance >= 8.0 else clyde.scatter_target
