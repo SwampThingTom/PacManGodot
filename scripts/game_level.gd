@@ -11,16 +11,22 @@ var pacman_fright_speed_mult: float
 var ghost_normal_speed_mult: float
 var ghost_tunnel_speed_mult: float
 var ghost_fright_speed_mult: float
+var fright_time_seconds: float
+var fright_flashes: int
 
 func _init(
     pacman_normal_speed_mult: float,
     pacman_fright_speed_mult: float,
     ghost_normal_speed_mult: float,
     ghost_tunnel_speed_mult: float,
-    ghost_fright_speed_mult: float
+    ghost_fright_speed_mult: float,
+    fright_time_seconds: float,
+    fright_flashes: int
 ) -> void:
     self.pacman_normal_speed_mult = pacman_normal_speed_mult
     self.pacman_fright_speed_mult = pacman_fright_speed_mult
     self.ghost_normal_speed_mult = ghost_normal_speed_mult
     self.ghost_tunnel_speed_mult = ghost_tunnel_speed_mult
     self.ghost_fright_speed_mult = ghost_fright_speed_mult
+    self.fright_time_seconds = fright_time_seconds
+    self.fright_flashes = fright_flashes

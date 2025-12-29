@@ -13,11 +13,13 @@ enum Mode {
 static var _mode_durations: Array[Array] = []
 
 var _running := false
+var _level: int = 0
 var _level_index: int = 0
 var _mode_index: int = 0
 var _mode = Mode.SCATTER
 var _duration: float = 0.0
 var _is_frightened = false
+var _frightened_duration: float = 0.0
 
 
 static func _static_init() -> void:
@@ -36,6 +38,7 @@ func _process(delta: float) -> void:
     
     var mode := get_mode()
     if mode == Mode.FRIGHTENED:
+        _handle_frightened_mode(delta)
         return
     
     if _mode_index >= _mode_durations[0].size():
@@ -46,7 +49,13 @@ func _process(delta: float) -> void:
         _mode = Mode.CHASE if mode == Mode.SCATTER else Mode.SCATTER
         _mode_index += 1
         _duration = _get_duration()
-        mode_changed.emit(_mode)
+        _emit_mode_changed()
+
+
+func _handle_frightened_mode(delta: float) -> void:
+    _frightened_duration -= delta
+    if _frightened_duration <= 0.0:
+        _set_frightened(false)
 
 
 # -----------------------------------------------
@@ -54,7 +63,8 @@ func _process(delta: float) -> void:
 # -----------------------------------------------
 
 func on_start_level(level: int) -> void:
-    _level_index = _get_level_index(level)
+    _level = level
+    _level_index = _get_level_index(_level)
 
 
 func on_start_round() -> void:
@@ -83,6 +93,10 @@ func get_mode() -> Mode:
     return _mode if not _is_frightened else Mode.FRIGHTENED
 
 
+func start_frightened() -> void:
+    _set_frightened(true)
+
+
 # -----------------------------------------------
 # Helpers
 # -----------------------------------------------
@@ -99,3 +113,13 @@ func _get_level_index(level: int) -> int:
     if level < 5:
         return 1
     return 2
+
+
+func _set_frightened(is_frightened: bool) -> void:
+    _is_frightened = is_frightened
+    _frightened_duration = LevelData.get_fright_time_seconds(_level)
+    _emit_mode_changed()
+
+
+func _emit_mode_changed() -> void:
+    mode_changed.emit(get_mode())

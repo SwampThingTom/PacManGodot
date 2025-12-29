@@ -179,6 +179,9 @@ func _on_pellet_eaten(is_power_pellet: bool):
     var points := 50 if is_power_pellet else 10
     _update_current_player_score(points)
     ghosts.on_pellet_eaten()
+    
+    if is_power_pellet:
+        ghost_mode.start_frightened()
 
 
 func _on_all_pellets_eaten():

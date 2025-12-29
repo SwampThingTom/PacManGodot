@@ -14,6 +14,7 @@ enum State {
 const CENTER_EPS := 0.05
 
 @export var animations: SpriteFrames
+@export var frightened_animations: SpriteFrames
 @export var maze: Maze
 @export var ghost_mode: GhostMode
 @export var chase_target: Callable # returns a Vector2i for target cell
@@ -131,12 +132,12 @@ func leave_house():
 # -----------------------------------------------
 
 func _on_mode_changed(new_mode: GhostMode.Mode):
-    assert(new_mode != _mode, "Switching to the existing mode")
-    if _mode != GhostMode.Mode.FRIGHTENED:
-        # Reverse direction when mode changes
+    # Reverse direction when mode changes (except when leaving FRIGHTENED)
+    if _mode != GhostMode.Mode.FRIGHTENED or new_mode == GhostMode.Mode.FRIGHTENED:
         _next_direction = -_direction if _state == State.ACTIVE else -_direction_when_active
     _mode = new_mode
-
+    _update_animation()
+    
 
 # -----------------------------------------------
 # Helpers
@@ -176,7 +177,6 @@ func _determine_next_cell_leaving_house() -> void:
 
 func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     assert(_state == State.ACTIVE, "_get_next_direction only valid for ACTIVE state")
-
 
     # Order matters to break ties the same way the arcade game did
     var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.LEFT, Vector2i.DOWN, Vector2i.RIGHT]
@@ -224,6 +224,10 @@ func _get_target_cell() -> Vector2i:
 
 func _update_direction(dir: Vector2i):
     _direction = dir
+
+    if _mode == GhostMode.Mode.FRIGHTENED:
+        return
+
     match _direction:
         Vector2i.LEFT:
             anim.play("left")
@@ -233,3 +237,10 @@ func _update_direction(dir: Vector2i):
             anim.play("up")
         Vector2i.DOWN:
             anim.play("down")
+
+
+func _update_animation() -> void:
+    if _mode == GhostMode.Mode.FRIGHTENED:
+        anim.sprite_frames = frightened_animations
+    else:
+        anim.sprite_frames = animations
