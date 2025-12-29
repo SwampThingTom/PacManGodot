@@ -93,6 +93,11 @@ static func get_fright_time_seconds(level: int) -> float:
     return data.fright_time_seconds
 
 
+static func get_fright_flashes(level: int) -> int:
+    var data := _get_level_data(level)
+    return data.fright_flashes
+
+
 static func _get_level_data(level: int) -> GameLevel:
     return _levels[_get_level_index(level)]
 

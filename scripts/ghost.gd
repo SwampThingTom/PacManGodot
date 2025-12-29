@@ -15,6 +15,7 @@ const CENTER_EPS := 0.05
 
 @export var animations: SpriteFrames
 @export var frightened_animations: SpriteFrames
+@export var flash_animations: SpriteFrames
 @export var maze: Maze
 @export var ghost_mode: GhostMode
 @export var chase_target: Callable # returns a Vector2i for target cell
@@ -36,6 +37,7 @@ var _direction_when_active: Vector2i
 
 func _ready():
     ghost_mode.mode_changed.connect(_on_mode_changed)
+    ghost_mode.frightened_flash.connect(_on_frightened_flash)
     anim.sprite_frames = animations
     anim.pause()
 
@@ -131,12 +133,17 @@ func leave_house():
 # Event Handlers
 # -----------------------------------------------
 
-func _on_mode_changed(new_mode: GhostMode.Mode):
+func _on_mode_changed(new_mode: GhostMode.Mode) -> void:
     # Reverse direction when mode changes (except when leaving FRIGHTENED)
     if _mode != GhostMode.Mode.FRIGHTENED or new_mode == GhostMode.Mode.FRIGHTENED:
         _next_direction = -_direction if _state == State.ACTIVE else -_direction_when_active
     _mode = new_mode
     _update_animation()
+
+
+func _on_frightened_flash(flash_white: bool) -> void:
+    assert(_mode == GhostMode.Mode.FRIGHTENED, "Flashing when not frightened")
+    anim.sprite_frames = flash_animations if flash_white else frightened_animations
     
 
 # -----------------------------------------------

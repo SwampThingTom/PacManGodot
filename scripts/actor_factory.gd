@@ -9,6 +9,7 @@ const PINKY_FRAMES  := preload("res://resources/pinky.tres")
 const INKY_FRAMES   := preload("res://resources/inky.tres")
 const CLYDE_FRAMES  := preload("res://resources/clyde.tres")
 const FRIGHT_FRAMES := preload("res://resources/frightened.tres")
+const FLASH_FRAMES  := preload("res://resources/flash.tres")
 
 var _maze: Maze
 
@@ -26,52 +27,57 @@ func make_pacman(pellets: Pellets) -> PacMan:
 
 
 func make_blinky(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
-    var ghost: Ghost = GHOST_SCENE.instantiate()
-    ghost.name = "Blinky"
-    ghost.animations = BLINKY_FRAMES
-    ghost.frightened_animations = FRIGHT_FRAMES
-    ghost.chase_target = targeting.blinky_chase_target
-    ghost.scatter_target = _maze.get_blinky_scatter_target()
-    ghost.maze = _maze
-    ghost.ghost_mode = ghost_mode
-    ghost.hide()
-    return ghost
+    return _make_ghost(
+        "Blinky",
+        BLINKY_FRAMES,
+        targeting.blinky_chase_target,
+        _maze.get_blinky_scatter_target(),
+        ghost_mode)
 
 
 func make_pinky(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
-    var ghost: Ghost = GHOST_SCENE.instantiate()
-    ghost.name = "Pinky"
-    ghost.animations = PINKY_FRAMES
-    ghost.frightened_animations = FRIGHT_FRAMES
-    ghost.chase_target = targeting.pinky_chase_target
-    ghost.scatter_target = _maze.get_pinky_scatter_target()
-    ghost.maze = _maze
-    ghost.ghost_mode = ghost_mode
-    ghost.hide()
-    return ghost
+    return _make_ghost(
+        "Pinky",
+        PINKY_FRAMES,
+        targeting.pinky_chase_target,
+        _maze.get_pinky_scatter_target(),
+        ghost_mode)
 
 
 func make_inky(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
-    var ghost: Ghost = GHOST_SCENE.instantiate()
-    ghost.name = "Inky"
-    ghost.animations = INKY_FRAMES
-    ghost.frightened_animations = FRIGHT_FRAMES
-    ghost.chase_target = targeting.inky_chase_target
-    ghost.scatter_target = _maze.get_inky_scatter_target()
-    ghost.maze = _maze
-    ghost.ghost_mode = ghost_mode
-    ghost.hide()
-    return ghost
+    return _make_ghost(
+        "Inky",
+        INKY_FRAMES,
+        targeting.inky_chase_target,
+        _maze.get_inky_scatter_target(),
+        ghost_mode)
 
 
 func make_clyde(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
+    return _make_ghost(
+        "Clyde",
+        CLYDE_FRAMES,
+        targeting.clyde_chase_target,
+        _maze.get_clyde_scatter_target(),
+        ghost_mode)
+
+
+func _make_ghost(
+    name: String, 
+    animations: SpriteFrames, 
+    chase_target: Callable, 
+    scatter_target: Vector2i, 
+    ghost_mode: GhostMode
+) -> Ghost:
     var ghost: Ghost = GHOST_SCENE.instantiate()
-    ghost.name = "Clyde"
-    ghost.animations = CLYDE_FRAMES
-    ghost.frightened_animations = FRIGHT_FRAMES
-    ghost.chase_target = targeting.clyde_chase_target
-    ghost.scatter_target = _maze.get_clyde_scatter_target()
-    ghost.maze = _maze
+    ghost.name = name
+    ghost.animations = animations
+    ghost.chase_target = chase_target
+    ghost.scatter_target = scatter_target
     ghost.ghost_mode = ghost_mode
+    ghost.frightened_animations = FRIGHT_FRAMES
+    ghost.flash_animations = FLASH_FRAMES
+    ghost.maze = _maze
     ghost.hide()
     return ghost
+    

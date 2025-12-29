@@ -3,12 +3,16 @@ extends Node
 ## Manages the current ghost mode.
 
 signal mode_changed(new_mode: Mode)
+signal frightened_flash(flash_white: bool)
 
 enum Mode {
     SCATTER,
     CHASE,
     FRIGHTENED
 }
+
+# Time spent in a single color (blue or white) while flashing.
+const FLASH_COLOR_SECONDS: float = 8.0 / 60.0
 
 static var _mode_durations: Array[Array] = []
 
@@ -20,6 +24,8 @@ var _mode = Mode.SCATTER
 var _duration: float = 0.0
 var _is_frightened = false
 var _frightened_duration: float = 0.0
+var _next_flash_time: float
+var _next_flash_is_white: bool
 
 
 static func _static_init() -> void:
@@ -38,24 +44,18 @@ func _process(delta: float) -> void:
     
     var mode := get_mode()
     if mode == Mode.FRIGHTENED:
-        _handle_frightened_mode(delta)
+        _process_frightened_mode(delta)
         return
     
     if _mode_index >= _mode_durations[0].size():
         return
-        
+    
     _duration -= delta
     if _duration <= 0.0:
         _mode = Mode.CHASE if mode == Mode.SCATTER else Mode.SCATTER
         _mode_index += 1
         _duration = _get_duration()
         _emit_mode_changed()
-
-
-func _handle_frightened_mode(delta: float) -> void:
-    _frightened_duration -= delta
-    if _frightened_duration <= 0.0:
-        _set_frightened(false)
 
 
 # -----------------------------------------------
@@ -115,10 +115,33 @@ func _get_level_index(level: int) -> int:
     return 2
 
 
+func _process_frightened_mode(delta: float) -> void:
+    assert(_is_frightened, "Frightened duration is not valid when not frightened")
+    _frightened_duration -= delta
+    if _frightened_duration <= 0.0:
+        _set_frightened(false)
+        return
+    
+    while _next_flash_time > 0.0 and _frightened_duration <= _next_flash_time:
+       _change_frightened_flash()
+
+
 func _set_frightened(is_frightened: bool) -> void:
     _is_frightened = is_frightened
-    _frightened_duration = LevelData.get_fright_time_seconds(_level)
+    
+    if _is_frightened:
+        _frightened_duration = LevelData.get_fright_time_seconds(_level)
+        var total_flash_time := LevelData.get_fright_flashes(_level) * FLASH_COLOR_SECONDS * 2.0
+        _next_flash_time = total_flash_time
+        _next_flash_is_white = true
+
     _emit_mode_changed()
+
+
+func _change_frightened_flash() -> void:
+    frightened_flash.emit(_next_flash_is_white)
+    _next_flash_time = _next_flash_time - FLASH_COLOR_SECONDS
+    _next_flash_is_white = not _next_flash_is_white
 
 
 func _emit_mode_changed() -> void:
