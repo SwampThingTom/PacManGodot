@@ -2,6 +2,11 @@ class_name Maze
 extends TileMapLayer
 ## Provides pathfinding data for navigating the maze.
 
+# Ghosts can not move up from these cells
+const SAFE_ZONE_CELLS: Array[Vector2i] = [
+    Vector2i(12, 14), Vector2i(15, 14), Vector2i(12, 26), Vector2i(15, 26)
+]
+
 var _min_x_cell: int = 0
 var _max_x_cell: int = 0
 
@@ -27,6 +32,10 @@ func get_center_of_cell(cell: Vector2i) -> Vector2:
 func is_open(cell: Vector2i, dir: Vector2i) -> bool:
     var next_cell: Vector2i = cell + dir
     return get_cell_tile_data(next_cell) == null
+
+
+func is_safe_zone(cell: Vector2i) -> bool:
+    return SAFE_ZONE_CELLS.has(cell)
 
 
 func wrap_cell(cell: Vector2i) -> Vector2i:

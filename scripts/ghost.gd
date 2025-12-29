@@ -131,6 +131,7 @@ func leave_house():
 # -----------------------------------------------
 
 func _on_mode_changed(new_mode: GhostMode.Mode):
+    assert(new_mode != _mode, "Switching to the existing mode")
     if _mode != GhostMode.Mode.FRIGHTENED:
         # Reverse direction when mode changes
         _next_direction = -_direction if _state == State.ACTIVE else -_direction_when_active
@@ -176,17 +177,13 @@ func _determine_next_cell_leaving_house() -> void:
 func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     assert(_state == State.ACTIVE, "_get_next_direction only valid for ACTIVE state")
 
-    # Ghosts can not move up from these tiles
-    var safe_zone_cells: Array[Vector2i] = [
-        Vector2i(12, 14), Vector2i(15, 14), Vector2i(12, 26), Vector2i(15, 26)
-    ]
 
     # Order matters to break ties the same way the arcade game did
     var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.LEFT, Vector2i.DOWN, Vector2i.RIGHT]
 
     # Next cell can be outside of the maze if going through a tunnel
     from_cell = maze.wrap_cell(from_cell)
-    var is_safe_cell := safe_zone_cells.has(from_cell)
+    var is_safe_cell := maze.is_safe_zone(from_cell)
 
     var target: Vector2i = _get_target_cell()
     var best_dir: Vector2i = dir
