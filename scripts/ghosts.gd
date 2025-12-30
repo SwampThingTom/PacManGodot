@@ -255,5 +255,5 @@ func _run_exit_queue() -> void:
 
 
 func _wait_until_exited(ghost: Ghost) -> void:
-    while is_instance_valid(ghost) and ghost.is_active():
+    while is_instance_valid(ghost) and not ghost.is_active():
         await get_tree().process_frame
