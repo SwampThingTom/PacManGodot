@@ -49,26 +49,25 @@ func _process(delta):
     if _state == State.IN_HOUSE:
         return
     
+    _move_towards_next_cell(delta)
+    if position == _next_cell_center:
+        _determine_next_cell()
+
+
+func _move_towards_next_cell(delta: float):
     var speed: float = _get_speed()
     var move_distance: float = speed * delta
     var distance_to_next_cell: float = (_next_cell_center - position).length()
     
     if distance_to_next_cell > move_distance + CENTER_EPS:
         # Continue moving to next cell
-        # Note: don't handle tunnel here -- only teleport at cell center.
         position += move_distance * _direction
         return
-    
+
     # Snap to cell center
     position = _next_cell_center
     position = maze.handle_tunnel(position)
     _cell = maze.get_cell(position)
-    
-    if _state == State.ACTIVE:
-        assert(maze.is_open(_cell, _next_direction))
-        _update_direction(_next_direction)
-
-    _determine_next_cell()
 
 
 # -----------------------------------------------
@@ -84,7 +83,7 @@ func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
     _state = State.IN_HOUSE if is_in_house else State.ACTIVE
     _mode = ghost_mode.get_mode()
     _cell = maze.get_cell(position)
-    _update_direction(Vector2i.LEFT)
+    _next_direction = Vector2i.LEFT
     _determine_next_cell()
 
 
@@ -159,13 +158,20 @@ func _get_speed():
 
 
 func _determine_next_cell() -> void:
-    if _state == State.LEAVE_HOUSE:
-        # don't return early, state may change to ACTIVE
-        _determine_next_cell_leaving_house()
-    
-    if _state != State.ACTIVE:
-        return
-    
+    match _state:
+        State.IN_HOUSE:
+            return
+        State.LEAVE_HOUSE:
+            _determine_next_cell_leaving_house()
+        State.RETURN_HOUSE:
+            return
+        State.ACTIVE:
+            _determine_next_cell_active()
+
+
+func _determine_next_cell_active() -> void:
+    assert(maze.is_open(_cell, _next_direction))
+    _update_direction(_next_direction)
     _next_cell = _cell + _direction
     _next_cell_center = maze.get_center_of_cell(_next_cell)
     _next_direction = _get_next_direction(_next_cell, _direction)
@@ -173,13 +179,18 @@ func _determine_next_cell() -> void:
 
 func _determine_next_cell_leaving_house() -> void:
     if position == maze.get_ghost_home_exit_position():
-        _cell = maze.get_cell(position)
-        _direction = _direction_when_active
-        _state = State.ACTIVE
+        _on_left_house()
         return
     
     _next_cell_center = maze.get_ghost_home_exit_position()
     _update_direction(Vector2i.UP)
+
+
+func _on_left_house() -> void:
+    _state = State.ACTIVE
+    _cell = maze.get_cell(position)
+    _next_direction = _direction_when_active
+    _determine_next_cell_active()
 
 
 func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
