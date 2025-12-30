@@ -131,3 +131,7 @@ func get_inky_scatter_target() -> Vector2i:
 
 func get_clyde_scatter_target() -> Vector2i:
     return Vector2i(0, 34)
+
+
+func get_ghost_home_target_cell() -> Vector2i:
+    return Vector2i(13, 14)

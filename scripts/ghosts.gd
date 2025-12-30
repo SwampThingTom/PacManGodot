@@ -74,6 +74,9 @@ func on_start_game(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> vo
     add_child(inky)
     add_child(clyde)
 
+    for ghost in _ghosts:
+        ghost.revived.connect(_on_ghost_revived)
+
 
 func on_start_level(level: int) -> void:
     _level_index = level - 1
@@ -185,6 +188,27 @@ func _handle_global_pellet_eaten() -> void:
             _use_global_counter = false
             _global_count = 0
             _refresh_next_ghost_in_house()
+
+
+func _on_ghost_revived(ghost_id: int) -> void:
+    assert(_is_in_house(ghost_id), "Revived ghost should be in ghost house")
+
+    if not _use_global_counter:
+        _queue_leave_house(ghost_id)
+        return
+
+    match ghost_id:
+        GhostId.BLINKY:
+            _queue_leave_house(ghost_id)
+        GhostId.PINKY:
+            if _global_count >= GLOBAL_PINKY_PELLET_LIMIT:
+                _queue_leave_house(ghost_id)
+        GhostId.INKY:
+            if _global_count >= GLOBAL_INKY_PELLET_LIMIT:
+                _queue_leave_house(ghost_id)
+        GhostId.CLYDE:
+            # Do nothing here; Clyde never releases via the global counter.
+            pass
 
 
 func _try_release_if_in_house(ghost_id: int) -> void:

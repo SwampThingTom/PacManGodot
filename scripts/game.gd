@@ -167,7 +167,9 @@ func _check_collisions() -> void:
 
 
 func _on_collision(ghost: Ghost) -> void:
-    if ghost_mode.get_mode() != GhostMode.Mode.FRIGHTENED:
+    if ghost_mode.get_mode() == GhostMode.Mode.FRIGHTENED:
+        _on_ghost_eaten(ghost)
+    else:
         _transition_to(State.PLAYER_DIED)
 
 
@@ -186,6 +188,12 @@ func _on_pellet_eaten(is_power_pellet: bool):
 
 func _on_all_pellets_eaten():
     _transition_to(State.LEVEL_COMPLETE)
+
+
+func _on_ghost_eaten(ghost: Ghost):
+    var points := 100 # TODO: Fix as more ghosts eaten
+    _update_current_player_score(points)
+    ghost.on_eaten()
 
 
 # -----------------------------------------------

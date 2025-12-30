@@ -4,6 +4,8 @@ extends Node2D
 ##
 ## Moves a ghost around the maze looking for Pac-Man.
 
+signal revived(ghost_id: Ghosts.GhostId)
+
 enum State {
     IN_HOUSE,
     LEAVE_HOUSE,
@@ -16,8 +18,11 @@ const CENTER_EPS := 0.05
 @export var animations: SpriteFrames
 @export var frightened_animations: SpriteFrames
 @export var flash_animations: SpriteFrames
+@export var eyes_animations: SpriteFrames
+
 @export var maze: Maze
 @export var ghost_mode: GhostMode
+@export var ghost_id: Ghosts.GhostId
 @export var chase_target: Callable # returns a Vector2i for target cell
 @export var scatter_target: Vector2i
 
@@ -32,6 +37,9 @@ var _next_cell: Vector2i
 var _next_cell_center: Vector2
 var _next_direction: Vector2i
 var _direction_when_active: Vector2i
+
+var _start_position: Vector2
+var _start_in_house: bool
 
 @onready var anim := $Sprite
 
@@ -79,11 +87,15 @@ func on_start_level(level: int) -> void:
 
 
 func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
+    _start_position = start_position
+    _start_in_house = is_in_house
     position = start_position
-    _state = State.IN_HOUSE if is_in_house else State.ACTIVE
     _mode = ghost_mode.get_mode()
+    _update_state(State.IN_HOUSE if is_in_house else State.ACTIVE)
     _cell = maze.get_cell(position)
-    _next_direction = Vector2i.LEFT
+    _update_direction(Vector2i.LEFT)
+    _next_direction = _direction
+    _direction_when_active = _direction
     _determine_next_cell()
 
 
@@ -125,7 +137,7 @@ func leave_house():
         _next_cell_center = maze.get_ghost_home_center_position()
         var direction = Vector2i.LEFT if position.x > _next_cell_center.x else Vector2i.RIGHT
         _update_direction(direction)
-    _state = State.LEAVE_HOUSE
+    _update_state(State.LEAVE_HOUSE)
 
 
 # -----------------------------------------------
@@ -133,17 +145,31 @@ func leave_house():
 # -----------------------------------------------
 
 func _on_mode_changed(new_mode: GhostMode.Mode) -> void:
+    if _mode == new_mode:
+        return
+
     # Reverse direction when mode changes (except when leaving FRIGHTENED)
     if _mode != GhostMode.Mode.FRIGHTENED or new_mode == GhostMode.Mode.FRIGHTENED:
-        _next_direction = -_direction if _state == State.ACTIVE else -_direction_when_active
+        if _state == State.ACTIVE:
+            _next_direction = -_direction
+        else:
+            _direction_when_active = -_direction_when_active
+
     _mode = new_mode
     _update_animation()
 
 
 func _on_frightened_flash(flash_white: bool) -> void:
     assert(_mode == GhostMode.Mode.FRIGHTENED, "Flashing when not frightened")
+    if _state == State.RETURN_HOUSE:
+        return
     anim.sprite_frames = flash_animations if flash_white else frightened_animations
-    
+
+
+func on_eaten() -> void:
+    assert(_mode == GhostMode.Mode.FRIGHTENED, "Ghost eaten when not frightened")
+    _update_state(State.RETURN_HOUSE)
+
 
 # -----------------------------------------------
 # Helpers
@@ -157,6 +183,27 @@ func _get_speed():
     return LevelData.get_ghost_normal_speed_pixels(_level)
 
 
+func _on_left_house() -> void:
+    _update_state(State.ACTIVE)
+    _cell = maze.get_cell(position)
+    _next_direction = _direction_when_active
+    _determine_next_cell_active()
+
+
+func _on_return_to_house() -> void:
+    _update_state(State.IN_HOUSE)
+
+    if _start_in_house:
+        # TODO: animate towards start position
+        position = _start_position
+
+    _cell = maze.get_cell(position)
+    _update_direction(Vector2i.LEFT)
+    _next_direction = _direction
+    _direction_when_active = _direction
+    revived.emit(ghost_id)
+
+
 func _determine_next_cell() -> void:
     match _state:
         State.IN_HOUSE:
@@ -164,17 +211,9 @@ func _determine_next_cell() -> void:
         State.LEAVE_HOUSE:
             _determine_next_cell_leaving_house()
         State.RETURN_HOUSE:
-            return
+            _determine_next_cell_returning_house()
         State.ACTIVE:
             _determine_next_cell_active()
-
-
-func _determine_next_cell_active() -> void:
-    assert(maze.is_open(_cell, _next_direction))
-    _update_direction(_next_direction)
-    _next_cell = _cell + _direction
-    _next_cell_center = maze.get_center_of_cell(_next_cell)
-    _next_direction = _get_next_direction(_next_cell, _direction)
 
 
 func _determine_next_cell_leaving_house() -> void:
@@ -186,16 +225,29 @@ func _determine_next_cell_leaving_house() -> void:
     _update_direction(Vector2i.UP)
 
 
-func _on_left_house() -> void:
-    _state = State.ACTIVE
-    _cell = maze.get_cell(position)
-    _next_direction = _direction_when_active
+func _determine_next_cell_returning_house() -> void:
+    if position == maze.get_ghost_home_center_position():
+        _on_return_to_house()
+        return
+    
+    if _cell == maze.get_ghost_home_target_cell():
+        position = maze.get_ghost_home_exit_position()
+        _next_cell_center = maze.get_ghost_home_center_position()
+        _update_direction(Vector2i.DOWN)
+        return
+    
     _determine_next_cell_active()
 
 
-func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
-    assert(_state == State.ACTIVE, "_get_next_direction only valid for ACTIVE state")
+func _determine_next_cell_active() -> void:
+    assert(maze.is_open(_cell, _next_direction))
+    _update_direction(_next_direction)
+    _next_cell = _cell + _direction
+    _next_cell_center = maze.get_center_of_cell(_next_cell)
+    _next_direction = _get_next_direction(_next_cell, _direction)
 
+    
+func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     # Order matters to break ties the same way the arcade game did
     var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.LEFT, Vector2i.DOWN, Vector2i.RIGHT]
 
@@ -235,15 +287,17 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
 
 
 func _get_target_cell() -> Vector2i:
+    if _state == State.RETURN_HOUSE:
+        return maze.get_ghost_home_target_cell()
     if _mode == GhostMode.Mode.SCATTER:
         return scatter_target
     return chase_target.call()
 
 
-func _update_direction(dir: Vector2i):
-    _direction = dir
+func _update_direction(new_direction: Vector2i):
+    _direction = new_direction
 
-    if _mode == GhostMode.Mode.FRIGHTENED:
+    if _mode == GhostMode.Mode.FRIGHTENED and _state != State.RETURN_HOUSE:
         return
 
     match _direction:
@@ -257,8 +311,15 @@ func _update_direction(dir: Vector2i):
             anim.play("down")
 
 
+func _update_state(new_state: State) -> void:
+    _state = new_state
+    _update_animation()
+
+
 func _update_animation() -> void:
-    if _mode == GhostMode.Mode.FRIGHTENED:
+    if _state == State.RETURN_HOUSE:
+        anim.sprite_frames = eyes_animations
+    elif _mode == GhostMode.Mode.FRIGHTENED:
         anim.sprite_frames = frightened_animations
     else:
         anim.sprite_frames = animations
