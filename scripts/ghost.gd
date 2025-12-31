@@ -13,6 +13,14 @@ enum State {
     ACTIVE
 }
 
+# These are in priority order per the original arcade game.
+const DIRECTIONS: Array[Vector2i] = [
+    Vector2i.UP,
+    Vector2i.LEFT,
+    Vector2i.DOWN,
+    Vector2i.RIGHT
+]
+
 const CENTER_EPS := 0.05
 
 @export var animations: SpriteFrames
@@ -40,6 +48,8 @@ var _direction_when_active: Vector2i
 
 var _start_position: Vector2
 var _start_in_house: bool
+
+var _rng = RandomNumberGenerator.new()
 
 @onready var anim := $Sprite
 
@@ -89,6 +99,10 @@ func on_start_level(level: int) -> void:
 func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
     _start_position = start_position
     _start_in_house = is_in_house
+    
+    # Reseed rng every round
+    _rng.seed = 0
+
     position = start_position
     _mode = ghost_mode.get_mode()
     _update_state(State.IN_HOUSE if is_in_house else State.ACTIVE)
@@ -244,13 +258,34 @@ func _determine_next_cell_active() -> void:
     _update_direction(_next_direction)
     _next_cell = _cell + _direction
     _next_cell_center = maze.get_center_of_cell(_next_cell)
-    _next_direction = _get_next_direction(_next_cell, _direction)
+    if _mode == GhostMode.Mode.FRIGHTENED and _state == State.ACTIVE:
+        _next_direction = _get_next_direction_frightened(_next_cell, _direction)
+    else:
+        _next_direction = _get_next_direction(_next_cell, _direction)
+
+
+func _get_next_direction_frightened(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
+    # Next cell can be outside of the maze if going through a tunnel
+    from_cell = maze.wrap_cell(from_cell)
+
+    var offset := _rng.randi() & 3
+    for dir_index in range(4):
+        var next_direction := DIRECTIONS[(dir_index + offset) % 4]
+        if next_direction == -dir:
+            continue
+        if maze.is_open(from_cell, next_direction):
+            return next_direction    
+    
+    # Reverse if no other option
+    if maze.is_open(from_cell, -dir):
+        return -dir
+
+    # famous last words: shouldn't be possible
+    assert(false, "Can't find a direction to travel in.")
+    return dir
 
     
 func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
-    # Order matters to break ties the same way the arcade game did
-    var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.LEFT, Vector2i.DOWN, Vector2i.RIGHT]
-
     # Next cell can be outside of the maze if going through a tunnel
     from_cell = maze.wrap_cell(from_cell)
     var is_safe_cell := maze.is_safe_zone(from_cell)
@@ -259,7 +294,7 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
     var best_dir: Vector2i = dir
     var best_score := INF
 
-    for d in directions:
+    for d in DIRECTIONS:
         # Don’t reverse
         if d == -dir:
             continue
