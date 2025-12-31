@@ -31,14 +31,14 @@ var _next_ghost_points: int = INITIAL_GHOST_POINTS
 var _pacman: PacMan
 var _targeting: GhostTargeting
 
-@onready var maze := $Maze
+@onready var maze: TileMapLayer = $Maze
 @onready var pellets: Pellets = $Pellets
-@onready var ready_text := $ReadyText
+@onready var ready_text: TileMapLayer = $ReadyText
 @onready var scores_text: ScoresText = $ScoresText
 @onready var ghost_mode: GhostMode = $GhostMode
-@onready var ghosts := $Ghosts
-@onready var ghost_points := $GhostPoints
-@onready var freeze_timer := $FreezeTimer # used while showing ghost points
+@onready var ghosts: Ghosts = $Ghosts
+@onready var ghost_points: GhostPoints = $GhostPoints
+@onready var freeze_timer: Timer = $FreezeTimer # used while showing ghost points
 
 
 func _ready() -> void:
