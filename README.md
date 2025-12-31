@@ -8,7 +8,7 @@ Will ultimately provide options to run with the original bugs (especially Pinky 
 Intended to be cross-platform.
 Hope to support Apple TV and iOS devices in addition to Mac and Windows.
 
-## Modes
+## Classes
 
 **Title**
 Title scene that simply waits for the user to start a new game.
@@ -57,18 +57,14 @@ Also responsible for PacMan animations.
 **ActorFactory**
 Responsible for creating Pac-Man and Ghost sprites.
 
-**GameLevel**
-Contains configuration data for a single game level (speeds, fruit, etc.).
-
 **LevelData**
 Maintains configuration data for all game levels and provides convenience functions to
 get specific data items for a given level.
 
 ## Features To-Do
 
-- Fruits
-- Player lives
-- Player death animation
+- Ghost release timer
+- Extra life
 - Additional levels past the first
 - Game over
 - Intermission animations
