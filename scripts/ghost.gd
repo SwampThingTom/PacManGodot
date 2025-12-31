@@ -57,12 +57,11 @@ func _process(delta):
     if _state == State.IN_HOUSE:
         return
     
-    _move_towards_next_cell(delta)
-    if position == _next_cell_center:
+    if _move_towards_next_cell(delta):
         _determine_next_cell()
 
 
-func _move_towards_next_cell(delta: float):
+func _move_towards_next_cell(delta: float) -> bool:
     var speed: float = _get_speed()
     var move_distance: float = speed * delta
     var distance_to_next_cell: float = (_next_cell_center - position).length()
@@ -70,12 +69,13 @@ func _move_towards_next_cell(delta: float):
     if distance_to_next_cell > move_distance + CENTER_EPS:
         # Continue moving to next cell
         position += move_distance * _direction
-        return
+        return false
 
     # Snap to cell center
     position = _next_cell_center
     position = maze.handle_tunnel(position)
     _cell = maze.get_cell(position)
+    return true
 
 
 # -----------------------------------------------
