@@ -71,6 +71,12 @@ func _calculate_tunnel_coordinates() -> void:
     _tunnel_max_x = map_to_local(Vector2i(_max_x_cell, 0)).x + _half_tile_size
 
 
+func get_fruit_position() -> Vector2:
+    var pos: Vector2 = map_to_local(Vector2i(13, 20))
+    pos.x += _half_tile_size
+    return pos
+
+
 func get_ghost_home_exit_position() -> Vector2:
     var pos: Vector2 = map_to_local(Vector2i(13, 14))
     pos.x += _half_tile_size

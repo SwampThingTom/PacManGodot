@@ -33,6 +33,7 @@ var _targeting: GhostTargeting
 
 @onready var maze: TileMapLayer = $Maze
 @onready var pellets: Pellets = $Pellets
+@onready var fruit: Fruit = $Fruit
 @onready var ready_text: TileMapLayer = $ReadyText
 @onready var scores_text: ScoresText = $ScoresText
 @onready var ghost_mode: GhostMode = $GhostMode
@@ -92,6 +93,7 @@ func _start_level() -> void:
     _pacman.on_start_level(_level)
     ghost_mode.on_start_level(_level)
     ghosts.on_start_level(_level)
+    fruit.on_start_level(_level)
     _transition_to(State.START_ROUND)
 
 
@@ -101,6 +103,7 @@ func _start_round() -> void:
     _pacman.on_start_round()
     ghost_mode.on_start_round()
     ghosts.on_start_round()
+    fruit.on_start_round()
     await _show_ready_sequence()
     _transition_to(State.PLAYING)
 
@@ -165,7 +168,20 @@ func _run_death_sequence() -> void:
 func _check_collisions() -> void:
     # This assumes that all other nodes have already been processed this frame.
     # (i.e., process_priority of this node is larger than other nodes)
-    var pacman_cell: Vector2i = _pacman.get_cell()
+    _check_fruit_collision()
+    _check_ghost_collisions()
+
+
+func _check_fruit_collision() -> void:
+    if not fruit.is_available():
+        return
+    if _pacman.position.distance_to(fruit.position) <= 8.0:
+        _update_current_player_score(fruit.get_points())
+        fruit.on_fruit_eaten()
+
+
+func _check_ghost_collisions() -> void:
+    var pacman_cell := _pacman.get_cell()
     for ghost in ghosts.get_ghosts():
         if not ghost.is_active():
             continue
@@ -189,6 +205,7 @@ func _on_pellet_eaten(is_power_pellet: bool):
     var points := POWER_PELLET_POINTS if is_power_pellet else PELLET_POINTS
     _update_current_player_score(points)
     ghosts.on_pellet_eaten()
+    fruit.on_pellet_eaten()
     
     if is_power_pellet:
         _next_ghost_points = INITIAL_GHOST_POINTS
