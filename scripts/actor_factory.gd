@@ -12,6 +12,9 @@ const FRIGHT_FRAMES := preload("res://resources/frightened.tres")
 const FLASH_FRAMES  := preload("res://resources/flash.tres")
 const EYES_FRAMES   := preload("res://resources/eyes.tres")
 
+const Z_INDEX_PAC_MAN := 10
+const Z_INDEX_GHOSTS  := 20
+
 var _maze: Maze
 
 
@@ -23,6 +26,7 @@ func make_pacman(pellets: Pellets) -> PacMan:
     var pacman: PacMan = PACMAN_SCENE.instantiate()
     pacman.maze = _maze
     pacman.pellets = pellets
+    pacman.z_index = Z_INDEX_PAC_MAN
     pacman.hide()
     return pacman    
 
@@ -86,6 +90,7 @@ func _make_ghost(
     ghost.flash_animations = FLASH_FRAMES
     ghost.eyes_animations = EYES_FRAMES
     ghost.maze = _maze
+    ghost.z_index = Z_INDEX_GHOSTS
     ghost.hide()
     return ghost
     

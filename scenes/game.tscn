@@ -28,6 +28,7 @@ tile_set = ExtResource("2_lnu2h")
 script = ExtResource("5_u5sy4")
 
 [node name="ReadyText" type="TileMapLayer" parent="."]
+z_index = 40
 tile_map_data = PackedByteArray("AAALABQAAAACABkAAAAMABQAAAAEABgAAAANABQAAAAAABgAAAAOABQAAAADABgAAAAPABQAAAAJABkAAAAQABQAAAALABkAAAA=")
 tile_set = ExtResource("5_p57ef")
 
