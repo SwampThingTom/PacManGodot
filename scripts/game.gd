@@ -25,6 +25,7 @@ const GHOST_SCORE_FREEZE_SECONDS = 0.25
 var _state: State = State.START_GAME
 var _level: int = 1
 var _current_player: int = 0
+var _lives_remaining: int = 2
 var _high_score: int = 0
 var _scores: Array[int]
 var _next_ghost_points: int = INITIAL_GHOST_POINTS
@@ -127,7 +128,13 @@ func _player_died() -> void:
     ghost_mode.on_player_died()
     ghosts.on_player_died()
     await _run_death_sequence()
-    _transition_to(State.START_ROUND) # TODO: Only if game not over
+    
+    if _lives_remaining <= 0:
+        _transition_to(State.GAME_OVER)
+        return
+
+    _lives_remaining -= 1
+    _transition_to(State.START_ROUND)
 
 
 func _level_complete() -> void:
@@ -150,6 +157,7 @@ func _game_over() -> void:
 func _show_ready_sequence() -> void:
     ready_text.show()
     await get_tree().create_timer(spawn_duration_sec).timeout
+    level_hud.update_lives(_lives_remaining)
     _pacman.show()
     ghosts.show_all()
     await get_tree().create_timer(ready_duration_sec).timeout
