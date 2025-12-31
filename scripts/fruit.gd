@@ -9,10 +9,10 @@ const SCORE_SHOWN_SECONDS: float = 1.0
 
 @export var maze: Maze
 
-var _points: int
+var _level: int
 var _pellets_eaten: int = 0
 var _fruit_available_timer: float = 0.0
-var _score_display_timer: float = 0.0
+var _points_display_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -24,10 +24,10 @@ func _process(delta: float) -> void:
         _fruit_available_timer -= delta
         if _fruit_available_timer <= 0.0:
             _hide_fruit()
-    elif _score_display_timer > 0.0:
-        _score_display_timer -= delta
-        if _score_display_timer <= 0.0:
-            _hide_score()
+    elif _points_display_timer > 0.0:
+        _points_display_timer -= delta
+        if _points_display_timer <= 0.0:
+            _hide_points()
 
 
 # -----------------------------------------------
@@ -39,13 +39,13 @@ func on_start_game(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> vo
 
 
 func on_start_level(level: int) -> void:
-    animation = LevelData.get_fruit_name(level)
-    _points = LevelData.get_fruit_points(level)
+    _level = level
     _pellets_eaten = 0
 
 
 func on_start_round() -> void:
     _hide_fruit()
+    _hide_points()
 
 
 func on_playing() -> void:
@@ -69,7 +69,7 @@ func is_available() -> bool:
 
 
 func get_points() -> int:
-    return _points
+    return LevelData.get_fruit_points(_level)
 
 
 func on_pellet_eaten():
@@ -81,7 +81,7 @@ func on_pellet_eaten():
 func on_fruit_eaten():
     assert(is_available(), "Fruit eaten when not available")
     _hide_fruit()
-    _show_score()
+    _show_points()
 
 
 # -----------------------------------------------
@@ -90,6 +90,7 @@ func on_fruit_eaten():
 
 func _show_fruit() -> void:
     _fruit_available_timer = FRUIT_AVAILABLE_SECONDS
+    animation = LevelData.get_fruit_name(_level)
     show()
 
 
@@ -98,12 +99,12 @@ func _hide_fruit() -> void:
     hide()
 
 
-func _show_score() -> void:
-    _score_display_timer = SCORE_SHOWN_SECONDS
-    print("show fruit score: ", _points)
+func _show_points() -> void:
+    _points_display_timer = SCORE_SHOWN_SECONDS
+    animation = "points_" + str(get_points())
+    show()
 
 
-func _hide_score() -> void:
-    print("hide fruit score")
-    _score_display_timer = 0.0
+func _hide_points() -> void:
+    _points_display_timer = 0.0
     hide()

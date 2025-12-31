@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://bbwfaot1ftioq"]
+[gd_resource type="SpriteFrames" load_steps=17 format=3 uid="uid://bbwfaot1ftioq"]
 
 [ext_resource type="Texture2D" uid="uid://cjdmuqjiruf40" path="res://assets/images/sprites.png" id="1_ymix5"]
 
@@ -29,6 +29,34 @@ region = Rect2(160, 48, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_lxvhr"]
 atlas = ExtResource("1_ymix5")
 region = Rect2(80, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymix5"]
+atlas = ExtResource("1_ymix5")
+region = Rect2(0, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rdk8j"]
+atlas = ExtResource("1_ymix5")
+region = Rect2(64, 144, 18, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rkhsg"]
+atlas = ExtResource("1_ymix5")
+region = Rect2(62, 160, 20, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eac22"]
+atlas = ExtResource("1_ymix5")
+region = Rect2(16, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cp6hm"]
+atlas = ExtResource("1_ymix5")
+region = Rect2(62, 176, 20, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2gd2t"]
+atlas = ExtResource("1_ymix5")
+region = Rect2(32, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_adqxr"]
+atlas = ExtResource("1_ymix5")
+region = Rect2(62, 192, 20, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kte4o"]
 atlas = ExtResource("1_ymix5")
@@ -90,6 +118,62 @@ animations = [{
 }],
 "loop": true,
 "name": &"peach",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ymix5")
+}],
+"loop": true,
+"name": &"points_100",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rdk8j")
+}],
+"loop": true,
+"name": &"points_1000",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rkhsg")
+}],
+"loop": true,
+"name": &"points_2000",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eac22")
+}],
+"loop": true,
+"name": &"points_300",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cp6hm")
+}],
+"loop": true,
+"name": &"points_3000",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2gd2t")
+}],
+"loop": true,
+"name": &"points_500",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_adqxr")
+}],
+"loop": true,
+"name": &"points_5000",
 "speed": 5.0
 }, {
 "frames": [{
