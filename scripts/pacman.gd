@@ -101,6 +101,10 @@ func get_direction() -> Vector2i:
     return _direction
 
 
+func play_death_animation() -> void:
+    anim.play("die")
+    await anim.animation_finished
+
 # -----------------------------------------------
 # Event Handlers
 # -----------------------------------------------

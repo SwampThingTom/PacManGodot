@@ -167,7 +167,7 @@ func _show_ready_sequence() -> void:
 func _run_death_sequence() -> void:
     await get_tree().create_timer(1.0).timeout
     ghosts.hide_all()
-    await get_tree().create_timer(1.0).timeout
+    await _pacman.play_death_animation()
     _pacman.hide()
     await get_tree().create_timer(1.0).timeout
 
