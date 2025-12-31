@@ -36,6 +36,7 @@ var _targeting: GhostTargeting
 @onready var fruit: Fruit = $Fruit
 @onready var ready_text: TileMapLayer = $ReadyText
 @onready var scores_text: ScoresText = $ScoresText
+@onready var level_hud: LevelHud = $LevelHud
 @onready var ghost_mode: GhostMode = $GhostMode
 @onready var ghosts: Ghosts = $Ghosts
 @onready var ghost_points: GhostPoints = $GhostPoints
@@ -81,6 +82,7 @@ func _enter_state(s: State) -> void:
 
 func _start_game() -> void:
     # Initialize game.
+    _level = 1
     _spawn_actors()
     _connect_signals()
     _reset_scores()
@@ -90,6 +92,7 @@ func _start_game() -> void:
 func _start_level() -> void:
     # Reset level-specific data.
     print("START_LEVEL ", _level)
+    level_hud.update_fruits(_level)
     _pacman.on_start_level(_level)
     ghost_mode.on_start_level(_level)
     ghosts.on_start_level(_level)
