@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://w36u071fkv8j"]
+[gd_scene load_steps=11 format=4 uid="uid://w36u071fkv8j"]
 
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="TileSet" uid="uid://24h26788xdgn" path="res://resources/maze.tres" id="2_lnu2h"]
@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://bao66gy5xp8hd" path="res://scripts/pellets.gd" id="5_u5sy4"]
 [ext_resource type="Script" uid="uid://fpold7bggo7p" path="res://scripts/maze.gd" id="6_gee14"]
 [ext_resource type="Script" uid="uid://c13304fq6gxnj" path="res://scripts/ghost_mode.gd" id="9_0tnpc"]
+[ext_resource type="SpriteFrames" uid="uid://1asnobrm0233" path="res://resources/ghost_points.tres" id="9_vtaks"]
+[ext_resource type="Script" uid="uid://hxdydydwctcg" path="res://scripts/ghost_points.gd" id="10_kvpfn"]
 [ext_resource type="Script" uid="uid://c0kw5cc3uo1ml" path="res://scripts/ghosts.gd" id="10_vtaks"]
 
 [node name="Game" type="Node2D"]
@@ -38,3 +40,14 @@ script = ExtResource("9_0tnpc")
 [node name="Ghosts" type="Node2D" parent="." node_paths=PackedStringArray("maze")]
 script = ExtResource("10_vtaks")
 maze = NodePath("../Maze")
+
+[node name="GhostPoints" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = 30
+sprite_frames = ExtResource("9_vtaks")
+animation = &"200"
+script = ExtResource("10_kvpfn")
+
+[node name="FreezeTimer" type="Timer" parent="."]
+process_mode = 3
+one_shot = true

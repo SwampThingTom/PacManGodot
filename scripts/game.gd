@@ -14,6 +14,11 @@ enum State {
     GAME_OVER,
 }
 
+const PELLET_POINTS = 10
+const POWER_PELLET_POINTS = 50
+const INITIAL_GHOST_POINTS = 200
+const GHOST_SCORE_FREEZE_SECONDS = 0.25
+
 @export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
 @export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
 
@@ -22,6 +27,7 @@ var _level: int = 1
 var _current_player: int = 0
 var _high_score: int = 0
 var _scores: Array[int]
+var _next_ghost_points: int = INITIAL_GHOST_POINTS
 var _pacman: PacMan
 var _targeting: GhostTargeting
 
@@ -31,6 +37,8 @@ var _targeting: GhostTargeting
 @onready var scores_text: ScoresText = $ScoresText
 @onready var ghost_mode: GhostMode = $GhostMode
 @onready var ghosts := $Ghosts
+@onready var ghost_points := $GhostPoints
+@onready var freeze_timer := $FreezeTimer # used while showing ghost points
 
 
 func _ready() -> void:
@@ -178,11 +186,12 @@ func _on_collision(ghost: Ghost) -> void:
 # -----------------------------------------------
 
 func _on_pellet_eaten(is_power_pellet: bool):
-    var points := 50 if is_power_pellet else 10
+    var points := POWER_PELLET_POINTS if is_power_pellet else PELLET_POINTS
     _update_current_player_score(points)
     ghosts.on_pellet_eaten()
     
     if is_power_pellet:
+        _next_ghost_points = INITIAL_GHOST_POINTS
         ghost_mode.start_frightened()
 
 
@@ -191,9 +200,10 @@ func _on_all_pellets_eaten():
 
 
 func _on_ghost_eaten(ghost: Ghost):
-    var points := 100 # TODO: Fix as more ghosts eaten
-    _update_current_player_score(points)
+    _update_current_player_score(_next_ghost_points)
+    await _show_ghost_points(ghost, _next_ghost_points)
     ghost.on_eaten()
+    _next_ghost_points *= 2
 
 
 # -----------------------------------------------
@@ -233,3 +243,24 @@ func _update_current_player_score(points: int) -> void:
     if current_score > _high_score:
         _high_score = current_score
         scores_text.draw_high_score(current_score)
+
+
+func _show_ghost_points(ghost: Ghost, points: int) -> void:
+    _pacman.hide()
+    ghost.hide()
+
+    ghost_points.position = maze.get_center_of_cell(ghost.get_cell())
+    ghost_points.show_points(points)
+    await _freeze_game(GHOST_SCORE_FREEZE_SECONDS)
+    ghost_points.hide()
+
+    ghost.show()
+    _pacman.show()
+
+
+# Pauses game play briefly while ghost score is displayed.
+func _freeze_game(seconds: float) -> void:
+    get_tree().paused = true
+    freeze_timer.start(seconds)
+    await freeze_timer.timeout
+    get_tree().paused = false
