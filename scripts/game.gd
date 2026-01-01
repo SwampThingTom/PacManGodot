@@ -14,6 +14,7 @@ enum State {
     GAME_OVER,
 }
 
+const TITLE_SCENE_PATH := "res://scenes/title.tscn"
 const PELLET_POINTS = 10
 const POWER_PELLET_POINTS = 50
 const INITIAL_GHOST_POINTS = 200
@@ -38,6 +39,7 @@ var _targeting: GhostTargeting
 @onready var pellets: Pellets = $Pellets
 @onready var fruit: Fruit = $Fruit
 @onready var ready_text: TileMapLayer = $ReadyText
+@onready var game_over_text: TileMapLayer = $GameOverText
 @onready var scores_text: ScoresText = $ScoresText
 @onready var level_hud: LevelHud = $LevelHud
 @onready var ghost_mode: GhostMode = $GhostMode
@@ -154,6 +156,8 @@ func _level_complete() -> void:
 
 func _game_over() -> void:
     print("GAME_OVER")
+    await _run_game_over_sequence()
+    get_tree().change_scene_to_file(TITLE_SCENE_PATH)
 
 
 # -----------------------------------------------
@@ -184,6 +188,11 @@ func _run_level_complete_sequence() -> void:
     _pacman.hide()
     # TODO: blink map white
     await get_tree().create_timer(1.0).timeout
+
+
+func _run_game_over_sequence() -> void:
+    game_over_text.show()
+    await get_tree().create_timer(5.0).timeout
 
 
 # -----------------------------------------------

@@ -64,7 +64,6 @@ sprite_frames = ExtResource("7_kvpfn")
 animation = &"cherries"
 
 [node name="Fruit6" type="AnimatedSprite2D" parent="LevelHud"]
-visible = false
 position = Vector2(192, 0)
 sprite_frames = ExtResource("7_kvpfn")
 animation = &"cherries"
@@ -98,8 +97,15 @@ tile_set = ExtResource("2_lnu2h")
 script = ExtResource("5_u5sy4")
 
 [node name="ReadyText" type="TileMapLayer" parent="."]
+visible = false
 z_index = 40
 tile_map_data = PackedByteArray("AAALABQAAAACABkAAAAMABQAAAAEABgAAAANABQAAAAAABgAAAAOABQAAAADABgAAAAPABQAAAAJABkAAAAQABQAAAALABkAAAA=")
+tile_set = ExtResource("5_p57ef")
+
+[node name="GameOverText" type="TileMapLayer" parent="."]
+visible = false
+z_index = 40
+tile_map_data = PackedByteArray("AAAJABQAAAAGAAQAAAAKABQAAAAAAAQAAAALABQAAAAMAAQAAAAMABQAAAAEAAQAAAAPABQAAAAOAAQAAAAQABQAAAAGAAUAAAARABQAAAAEAAQAAAASABQAAAACAAUAAAA=")
 tile_set = ExtResource("5_p57ef")
 
 [node name="Fruit" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("maze")]
