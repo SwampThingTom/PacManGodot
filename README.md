@@ -63,10 +63,9 @@ get specific data items for a given level.
 
 ## Features To-Do
 
-- Ghost release timer
 - Extra life
-- Additional levels past the first
 - Game over
+- Sound effects
 - Intermission animations
 - Attract mode on title screen
 - Second player
