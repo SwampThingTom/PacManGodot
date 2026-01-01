@@ -106,6 +106,7 @@ func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
     _rng.seed = 0
 
     position = start_position
+    _is_frightened = false
     _update_state(State.IN_HOUSE if is_in_house else State.ACTIVE)
     _elroy_mode = 0
     _cell = maze.get_cell(position)
@@ -176,6 +177,9 @@ func _on_frightened_changed(new_is_frightened: bool) -> void:
     if _is_frightened == new_is_frightened:
         return
 
+    if _state == State.RETURN_HOUSE:
+        return
+
     _is_frightened = new_is_frightened
     if _is_frightened:
         _reverse_direction()
@@ -207,6 +211,8 @@ func _reverse_direction() -> void:
 
 
 func _get_speed():
+    if _state == State.RETURN_HOUSE:
+        return LevelData.get_ghost_eyes_speed_pixels()
     if maze.is_in_tunnel(_cell):
         return LevelData.get_ghost_tunnel_speed_pixels(_level)
     if _is_frightened:

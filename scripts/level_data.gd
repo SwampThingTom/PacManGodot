@@ -111,6 +111,11 @@ static func get_ghost_fright_speed_tiles(level: int) -> float:
     return data.ghost_fright_speed_mult * MAX_TILES_PER_SECOND
 
 
+# A dead ghost returning to the ghost house uses the same speed regardless of level.
+static func get_ghost_eyes_speed_tiles() -> float:
+    return MAX_TILES_PER_SECOND
+
+
 static func get_elroy_1_speed_tiles(level: int) -> float:
     var data := _get_level_data(level)
     return data.elroy_1_speed_mult * MAX_TILES_PER_SECOND
