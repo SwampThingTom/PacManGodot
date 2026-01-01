@@ -96,7 +96,6 @@ func _move_towards_next_cell(delta: float) -> bool:
 
 func on_start_level(level: int) -> void:
     _level = level
-    _elroy_mode = 0
 
 
 func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
@@ -108,6 +107,7 @@ func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
 
     position = start_position
     _update_state(State.IN_HOUSE if is_in_house else State.ACTIVE)
+    _elroy_mode = 0
     _cell = maze.get_cell(position)
     _update_direction(Vector2i.LEFT)
     _next_direction = _direction

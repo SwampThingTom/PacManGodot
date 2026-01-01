@@ -50,6 +50,8 @@ var _ghosts: Array[Ghost]
 
 var _is_playing: bool = false
 var _level: int
+var _is_elroy_paused: bool
+var _remaining_pellets: int
 
 # Determines whether the individual counters or the global counter is used.
 var _use_global_counter: bool = false
@@ -90,6 +92,7 @@ func _process(delta: float) -> void:
 # -----------------------------------------------
 
 func on_start_game(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> void:
+    _is_elroy_paused = false
     _ghosts = [blinky, pinky, inky, clyde]
     add_child(blinky)
     add_child(pinky)
@@ -135,6 +138,8 @@ func on_playing() -> void:
 
 func on_player_died() -> void:
     _is_playing = false
+    _is_elroy_paused = true
+
     _reset_exit_queue()
     for ghost in _ghosts:
         ghost.on_player_died()
@@ -173,7 +178,8 @@ func hide_all() -> void:
 
 
 func on_pellet_eaten(remaining_pellets: int) -> void:
-    _check_elroy_mode(remaining_pellets)
+    _remaining_pellets = remaining_pellets
+    _check_elroy_mode()
     _inactivity_timer = 0.0
     if _use_global_counter:
         _handle_global_pellet_eaten()
@@ -181,11 +187,13 @@ func on_pellet_eaten(remaining_pellets: int) -> void:
         _handle_individual_pellet_eaten()
 
 
-func _check_elroy_mode(remaining_pellets: int) -> void:
-    if remaining_pellets <= LevelData.get_elroy_1_dots(_level):
-        _ghosts[GhostId.BLINKY].set_elroy_mode(1)
-    elif remaining_pellets <= LevelData.get_elroy_2_dots(_level):
+func _check_elroy_mode() -> void:
+    if _is_elroy_paused:
+        return
+    if _remaining_pellets <= LevelData.get_elroy_2_dots(_level):
         _ghosts[GhostId.BLINKY].set_elroy_mode(2)
+    elif _remaining_pellets <= LevelData.get_elroy_1_dots(_level):
+        _ghosts[GhostId.BLINKY].set_elroy_mode(1)
 
 
 func _handle_individual_pellet_eaten() -> void:
@@ -296,6 +304,11 @@ func _run_exit_queue() -> void:
         var ghost: Ghost = _ghosts[id]
         assert(ghost.is_in_house(), "Ghost is not in the house")
         ghost.leave_house()
+        
+        if id == GhostId.CLYDE:
+            _is_elroy_paused = false
+            _check_elroy_mode()
+
         await _wait_until_exited(ghost)
 
     _is_ghost_exiting = false
