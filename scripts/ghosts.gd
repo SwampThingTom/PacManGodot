@@ -16,6 +16,10 @@ extends Node2D
 ## Clyde is still in the ghost house, the system disables the global counter
 ## and returns to the individual counter. In this case, the individual counter
 ## is not reset to 0 so it picks up wherever it left off when the player died.
+##
+## Finally, there is an inactivity timer that checks how much time has passed
+## since the last dot was eaten. Once that reaches a per-level limit, a ghost
+## is released from the house (if one is there).
 
 enum GhostId {
     BLINKY,
@@ -44,6 +48,7 @@ const GLOBAL_DEACTIVATE_LIMIT := 32
 # Ghosts in order: blinky, pinky, inky, clyde
 var _ghosts: Array[Ghost]
 
+var _is_playing: bool = false
 var _level_index: int
 var _next_ghost: int
 
@@ -58,10 +63,24 @@ var _individual_counts: Array[int] = [0, 0, 0, 0]
 # This is only incremented when the global counter is enabled.
 var _global_count: int = 0
 
+# Used as a backup to release the next ghost while pellets are not being eaten.
+var _inactivity_timer: float = 0.0
+var _inactivity_timer_limit: float
+
 # Ensures ghosts leave the house orderly
 var _exit_queue: Array[int] = []
 var _is_ghost_exiting := false
 var _clear_exit_queue := false
+
+
+func _process(delta: float) -> void:
+    if not _is_playing:
+        return
+    
+    _inactivity_timer += delta
+    if _inactivity_timer >= _inactivity_timer_limit:
+        _release_next_ghost_inactivity()
+        _inactivity_timer = 0.0
 
 
 # -----------------------------------------------
@@ -85,12 +104,14 @@ func on_start_level(level: int) -> void:
     _use_global_counter = false
     _individual_counts = [0, 0, 0, 0]
     _global_count = 0
+    _inactivity_timer_limit = 3.0 if level >= 5 else 4.0
     
     for ghost in _ghosts:
         ghost.on_start_level(level)
 
 
 func on_start_round() -> void:
+    _inactivity_timer = 0.0
     _ghosts[GhostId.BLINKY].on_start_round(maze.get_blinky_start_position(), false)
     _ghosts[GhostId.PINKY].on_start_round(maze.get_pinky_start_position(), true)
     _ghosts[GhostId.INKY].on_start_round(maze.get_inky_start_position(), true)
@@ -98,6 +119,8 @@ func on_start_round() -> void:
 
 
 func on_playing() -> void:
+    _is_playing = true
+
     for ghost in _ghosts:
         ghost.on_playing()
 
@@ -107,12 +130,11 @@ func on_playing() -> void:
         return
     
     while _get_pellet_limit(_next_ghost) == 0:
-        _queue_leave_house(_next_ghost)
-        _next_ghost += 1
-        _refresh_next_ghost_in_house()
+        _release_next_ghost_individual()
 
 
 func on_player_died() -> void:
+    _is_playing = false
     _reset_exit_queue()
     for ghost in _ghosts:
         ghost.on_player_died()
@@ -125,6 +147,7 @@ func on_player_died() -> void:
 
 
 func on_level_complete() -> void:
+    _is_playing = false
     _reset_exit_queue()
     for ghost in _ghosts:
         ghost.on_level_complete()
@@ -153,13 +176,14 @@ func hide_all() -> void:
 
 
 func on_pellet_eaten() -> void:
+    _inactivity_timer = 0.0
     if _use_global_counter:
         _handle_global_pellet_eaten()
     else:
-        _handle_personal_pellet_eaten()
+        _handle_individual_pellet_eaten()
 
 
-func _handle_personal_pellet_eaten() -> void:
+func _handle_individual_pellet_eaten() -> void:
     assert(not _use_global_counter, "Should be updating global counter")
 
     _refresh_next_ghost_in_house()
@@ -170,9 +194,7 @@ func _handle_personal_pellet_eaten() -> void:
 
     _individual_counts[_next_ghost] += 1
     if _individual_counts[_next_ghost] >= _get_pellet_limit(_next_ghost):
-        _queue_leave_house(_next_ghost)
-        _next_ghost += 1
-        _refresh_next_ghost_in_house()
+        _release_next_ghost_individual()
 
 
 func _handle_global_pellet_eaten() -> void:
@@ -212,6 +234,20 @@ func _on_ghost_revived(ghost_id: int) -> void:
         GhostId.CLYDE:
             # Do nothing here; Clyde never releases via the global counter.
             pass
+
+
+func _release_next_ghost_individual() -> void:
+    assert(not _use_global_counter)
+    _queue_leave_house(_next_ghost)
+    _next_ghost += 1
+    _refresh_next_ghost_in_house()
+
+
+func _release_next_ghost_inactivity() -> void:
+    for ghost in _ghosts:
+        if ghost.is_in_house():
+            _queue_leave_house(ghost.ghost_id)
+            return
 
 
 func _try_release_if_in_house(ghost_id: int) -> void:
@@ -263,7 +299,10 @@ func _run_exit_queue() -> void:
 
 func _reset_exit_queue() -> void:
     if _is_ghost_exiting:
+        # This causes `_run_exit_queue()` to clear the queue
         _clear_exit_queue = true
+    else:
+        _exit_queue.clear()
 
 
 func _wait_until_exited(ghost: Ghost) -> void:
