@@ -49,11 +49,15 @@ const GLOBAL_DEACTIVATE_LIMIT := 32
 var _ghosts: Array[Ghost]
 
 var _is_playing: bool = false
+
+# Index into the INDIVIDUAL_PELLET_LIMITS array.
 var _level_index: int
-var _next_ghost: int
 
 # Determines whether the individual counters or the global counter is used.
 var _use_global_counter: bool = false
+
+# The next ghost to be released using the individual pellet counters.
+var _next_individual_ghost: int
 
 # The number of pellets that have been eaten per-ghost.
 # These are only incremented when the global counter is disabled.
@@ -100,8 +104,8 @@ func on_start_game(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> vo
 
 func on_start_level(level: int) -> void:
     _level_index = level - 1
-    _next_ghost = GhostId.PINKY
     _use_global_counter = false
+    _next_individual_ghost = GhostId.PINKY
     _individual_counts = [0, 0, 0, 0]
     _global_count = 0
     _inactivity_timer_limit = 3.0 if level >= 5 else 4.0
@@ -123,14 +127,12 @@ func on_playing() -> void:
 
     for ghost in _ghosts:
         ghost.on_playing()
-
-    _refresh_next_ghost_in_house()
     
-    if _use_global_counter:
-        return
-    
-    while _get_pellet_limit(_next_ghost) == 0:
-        _release_next_ghost_individual()
+    _next_individual_ghost = GhostId.PINKY
+    if not _use_global_counter:
+        _refresh_next_ghost_in_house()
+        while _get_pellet_limit(_next_individual_ghost) == 0:
+            _release_next_ghost_individual()
 
 
 func on_player_died() -> void:
@@ -141,9 +143,6 @@ func on_player_died() -> void:
     
     _use_global_counter = true
     _global_count = 0
-
-    _next_ghost = GhostId.PINKY
-    _refresh_next_ghost_in_house()
 
 
 func on_level_complete() -> void:
@@ -187,13 +186,13 @@ func _handle_individual_pellet_eaten() -> void:
     assert(not _use_global_counter, "Should be updating global counter")
 
     _refresh_next_ghost_in_house()
-    if _next_ghost >= _ghosts.size():
+    if _next_individual_ghost >= _ghosts.size():
         return
 
-    assert(_get_pellet_limit(_next_ghost) > 0, "Ghost has no pellet limit")
+    assert(_get_pellet_limit(_next_individual_ghost) > 0, "Ghost has no pellet limit")
 
-    _individual_counts[_next_ghost] += 1
-    if _individual_counts[_next_ghost] >= _get_pellet_limit(_next_ghost):
+    _individual_counts[_next_individual_ghost] += 1
+    if _individual_counts[_next_individual_ghost] >= _get_pellet_limit(_next_individual_ghost):
         _release_next_ghost_individual()
 
 
@@ -212,7 +211,6 @@ func _handle_global_pellet_eaten() -> void:
         if _is_in_house(GhostId.CLYDE):
             _use_global_counter = false
             _global_count = 0
-            _refresh_next_ghost_in_house()
 
 
 func _on_ghost_revived(ghost_id: int) -> void:
@@ -238,8 +236,8 @@ func _on_ghost_revived(ghost_id: int) -> void:
 
 func _release_next_ghost_individual() -> void:
     assert(not _use_global_counter)
-    _queue_leave_house(_next_ghost)
-    _next_ghost += 1
+    _queue_leave_house(_next_individual_ghost)
+    _next_individual_ghost += 1
     _refresh_next_ghost_in_house()
 
 
@@ -260,8 +258,8 @@ func _is_in_house(ghost_id: int) -> bool:
 
 
 func _refresh_next_ghost_in_house() -> void:
-    while _next_ghost < _ghosts.size() and not _is_in_house(_next_ghost):
-        _next_ghost += 1
+    while _next_individual_ghost < _ghosts.size() and not _is_in_house(_next_individual_ghost):
+        _next_individual_ghost += 1
 
 
 # Returns the current pellet limit for the given ghost.
