@@ -214,7 +214,7 @@ func _check_ghost_collisions() -> void:
 
 
 func _on_collision(ghost: Ghost) -> void:
-    if ghost_mode.get_mode() == GhostMode.Mode.FRIGHTENED:
+    if ghost.is_frightened():
         _on_ghost_eaten(ghost)
     else:
         _transition_to(State.PLAYER_DIED)

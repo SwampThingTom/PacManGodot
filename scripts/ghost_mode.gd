@@ -1,15 +1,12 @@
 class_name GhostMode
 extends Node
-## Manages the current ghost mode.
+## Manages the current ghost mode (scatter, chase, or frightened).
 
 signal mode_changed(new_mode: Mode)
+signal frightened_changed(is_frightened: bool)
 signal frightened_flash(flash_white: bool)
 
-enum Mode {
-    SCATTER,
-    CHASE,
-    FRIGHTENED
-}
+enum Mode { SCATTER, CHASE }
 
 # Time spent in a single color (blue or white) while flashing.
 const FLASH_COLOR_SECONDS: float = 8.0 / 60.0
@@ -42,8 +39,7 @@ func _process(delta: float) -> void:
     if not _running:
         return
     
-    var mode := get_mode()
-    if mode == Mode.FRIGHTENED:
+    if _is_frightened:
         _process_frightened_mode(delta)
         return
     
@@ -52,7 +48,7 @@ func _process(delta: float) -> void:
     
     _duration -= delta
     if _duration <= 0.0:
-        _mode = Mode.CHASE if mode == Mode.SCATTER else Mode.SCATTER
+        _mode = Mode.CHASE if _mode == Mode.SCATTER else Mode.SCATTER
         _mode_index += 1
         _duration = _get_duration()
         _emit_mode_changed()
@@ -71,6 +67,8 @@ func on_start_round() -> void:
     _mode_index = 0
     _mode = Mode.SCATTER
     _duration = _get_duration()
+    _is_frightened = false
+    _frightened_duration = 0.0
     
 
 func on_playing() -> void:
@@ -90,7 +88,7 @@ func on_level_complete() -> void:
 # -----------------------------------------------
 
 func get_mode() -> Mode:
-    return _mode if not _is_frightened else Mode.FRIGHTENED
+    return _mode
 
 
 func start_frightened() -> void:
@@ -131,11 +129,10 @@ func _set_frightened(is_frightened: bool) -> void:
     
     if _is_frightened:
         _frightened_duration = LevelData.get_fright_time_seconds(_level)
-        var total_flash_time := LevelData.get_fright_flashes(_level) * FLASH_COLOR_SECONDS * 2.0
-        _next_flash_time = total_flash_time
+        _next_flash_time = LevelData.get_fright_flashes(_level) * FLASH_COLOR_SECONDS * 2.0
         _next_flash_is_white = true
 
-    _emit_mode_changed()
+    frightened_changed.emit(_is_frightened)
 
 
 func _change_frightened_flash() -> void:
@@ -145,4 +142,4 @@ func _change_frightened_flash() -> void:
 
 
 func _emit_mode_changed() -> void:
-    mode_changed.emit(get_mode())
+    mode_changed.emit(_mode)

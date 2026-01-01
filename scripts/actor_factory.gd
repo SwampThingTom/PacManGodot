@@ -82,10 +82,10 @@ func _make_ghost(
     var ghost: Ghost = GHOST_SCENE.instantiate()
     ghost.name = name
     ghost.ghost_id = ghost_id
-    ghost.animations = animations
     ghost.chase_target = chase_target
     ghost.scatter_target = scatter_target
     ghost.ghost_mode = ghost_mode
+    ghost.normal_animations = animations
     ghost.frightened_animations = FRIGHT_FRAMES
     ghost.flash_animations = FLASH_FRAMES
     ghost.eyes_animations = EYES_FRAMES
