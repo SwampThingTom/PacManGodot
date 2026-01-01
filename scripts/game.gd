@@ -224,19 +224,18 @@ func _on_collision(ghost: Ghost) -> void:
 # Event Handlers
 # -----------------------------------------------
 
-func _on_pellet_eaten(is_power_pellet: bool):
+func _on_pellet_eaten(is_power_pellet: bool, pellets_remaining: int):
     var points := POWER_PELLET_POINTS if is_power_pellet else PELLET_POINTS
     _update_current_player_score(points)
-    ghosts.on_pellet_eaten()
+    ghosts.on_pellet_eaten(pellets_remaining)
     fruit.on_pellet_eaten()
     
     if is_power_pellet:
         _next_ghost_points = INITIAL_GHOST_POINTS
         ghost_mode.start_frightened()
-
-
-func _on_all_pellets_eaten():
-    _transition_to(State.LEVEL_COMPLETE)
+    
+    if pellets_remaining == 0:
+        _transition_to(State.LEVEL_COMPLETE)
 
 
 func _on_ghost_eaten(ghost: Ghost):
@@ -272,7 +271,6 @@ func _spawn_actors() -> void:
 
 func _connect_signals() -> void:
     pellets.pellet_eaten.connect(_on_pellet_eaten)
-    pellets.all_pellets_eaten.connect(_on_all_pellets_eaten)
 
 
 func _update_current_player_score(points: int) -> void:

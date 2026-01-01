@@ -49,9 +49,7 @@ const GLOBAL_DEACTIVATE_LIMIT := 32
 var _ghosts: Array[Ghost]
 
 var _is_playing: bool = false
-
-# Index into the INDIVIDUAL_PELLET_LIMITS array.
-var _level_index: int
+var _level: int
 
 # Determines whether the individual counters or the global counter is used.
 var _use_global_counter: bool = false
@@ -103,7 +101,7 @@ func on_start_game(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> vo
 
 
 func on_start_level(level: int) -> void:
-    _level_index = level - 1
+    _level = level
     _use_global_counter = false
     _next_individual_ghost = GhostId.PINKY
     _individual_counts = [0, 0, 0, 0]
@@ -174,12 +172,20 @@ func hide_all() -> void:
         ghost.hide()
 
 
-func on_pellet_eaten() -> void:
+func on_pellet_eaten(remaining_pellets: int) -> void:
+    _check_elroy_mode(remaining_pellets)
     _inactivity_timer = 0.0
     if _use_global_counter:
         _handle_global_pellet_eaten()
     else:
         _handle_individual_pellet_eaten()
+
+
+func _check_elroy_mode(remaining_pellets: int) -> void:
+    if remaining_pellets <= LevelData.get_elroy_1_dots(_level):
+        _ghosts[GhostId.BLINKY].set_elroy_mode(1)
+    elif remaining_pellets <= LevelData.get_elroy_2_dots(_level):
+        _ghosts[GhostId.BLINKY].set_elroy_mode(2)
 
 
 func _handle_individual_pellet_eaten() -> void:
@@ -267,9 +273,10 @@ func _refresh_next_ghost_in_house() -> void:
 func _get_pellet_limit(ghost_id: GhostId) -> int:
     if ghost_id >= _ghosts.size():
         return -1
-    if _level_index >= INDIVIDUAL_PELLET_LIMITS.size():
+    var level_index = _level - 1
+    if level_index >= INDIVIDUAL_PELLET_LIMITS.size():
         return 0
-    return INDIVIDUAL_PELLET_LIMITS[_level_index][ghost_id]
+    return INDIVIDUAL_PELLET_LIMITS[level_index][ghost_id]
 
 
 func _queue_leave_house(ghost_id: int) -> void:

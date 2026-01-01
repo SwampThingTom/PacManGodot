@@ -2,8 +2,7 @@ class_name Pellets
 extends TileMapLayer
 ## Manages the remaining pellets in the maze.
 
-signal pellet_eaten(is_power_pellet: bool)
-signal all_pellets_eaten
+signal pellet_eaten(is_power_pellet: bool, pellets_remaining: int)
 
 var pellets_remaining: int
 var _snapshot: Array[Dictionary] = []
@@ -32,10 +31,7 @@ func try_eat_pellet(grid_pos: Vector2i) -> void:
     pellets_remaining -= 1
     
     var is_power_pellet := _tile_has_power_pellet(tile_data)
-    emit_signal("pellet_eaten", is_power_pellet)
-    
-    if pellets_remaining <= 0:
-        emit_signal("all_pellets_eaten")
+    emit_signal("pellet_eaten", is_power_pellet, pellets_remaining)
 
 
 func _tile_has_power_pellet(tile_data: TileData) -> bool:

@@ -19,27 +19,27 @@ static var _levels: Array[GameLevel] = []
 
 static func _static_init() -> void:
     _levels = [
-        GameLevel.new("cherries",   100, 0.80, 0.90, 0.75, 0.40, 0.50, 6.0, 5), # 1
-        GameLevel.new("strawberry", 300, 0.90, 0.95, 0.85, 0.45, 0.55, 5.0, 5), # 2
-        GameLevel.new("peach",      500, 0.90, 0.95, 0.85, 0.45, 0.55, 4.0, 5), # 3
-        GameLevel.new("peach",      500, 0.90, 0.95, 0.85, 0.45, 0.55, 3.0, 5), # 4
-        GameLevel.new("apple",      700, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5), # 5
-        GameLevel.new("apple",      700, 1.00, 1.00, 0.95, 0.50, 0.60, 5.0, 5), # 6
-        GameLevel.new("grapes",    1000, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5), # 7'
-        GameLevel.new("grapes",    1000, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5), # 8
-        GameLevel.new("galaxian",  2000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3), # 9
-        GameLevel.new("galaxian",  2000, 1.00, 1.00, 0.95, 0.50, 0.60, 5.0, 5), # 10
-        GameLevel.new("bell",      3000, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5), # 11
-        GameLevel.new("bell",      3000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3), # 12
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3), # 13
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 3.0, 5), # 14
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3), # 15
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3), # 16
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 0.0, 0), # 17
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3), # 18
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 0.0, 0), # 19
-        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 0.0, 0), # 20
-        GameLevel.new("key",       5000, 0.90, 0.90, 0.95, 0.50, 0.60, 0.0, 0), # 21+
+        GameLevel.new("cherries",   100, 0.80, 0.90, 0.75, 0.40, 0.50, 6.0, 5,  20, 0.80, 10, 0.85), # 1
+        GameLevel.new("strawberry", 300, 0.90, 0.95, 0.85, 0.45, 0.55, 5.0, 5,  30, 0.90, 15, 0.95), # 2
+        GameLevel.new("peach",      500, 0.90, 0.95, 0.85, 0.45, 0.55, 4.0, 5,  40, 0.90, 20, 0.95), # 3
+        GameLevel.new("peach",      500, 0.90, 0.95, 0.85, 0.45, 0.55, 3.0, 5,  40, 0.90, 20, 0.95), # 4
+        GameLevel.new("apple",      700, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5,  40, 1.00, 20, 1.05), # 5
+        GameLevel.new("apple",      700, 1.00, 1.00, 0.95, 0.50, 0.60, 5.0, 5,  50, 1.00, 25, 1.05), # 6
+        GameLevel.new("grapes",    1000, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5,  50, 1.00, 25, 1.05), # 7'
+        GameLevel.new("grapes",    1000, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5,  50, 1.00, 25, 1.05), # 8
+        GameLevel.new("galaxian",  2000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3,  60, 1.00, 30, 1.05), # 9
+        GameLevel.new("galaxian",  2000, 1.00, 1.00, 0.95, 0.50, 0.60, 5.0, 5,  60, 1.00, 30, 1.05), # 10
+        GameLevel.new("bell",      3000, 1.00, 1.00, 0.95, 0.50, 0.60, 2.0, 5,  60, 1.00, 30, 1.05), # 11
+        GameLevel.new("bell",      3000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3,  80, 1.00, 40, 1.05), # 12
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3,  80, 1.00, 40, 1.05), # 13
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 3.0, 5,  80, 1.00, 40, 1.05), # 14
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3, 100, 1.00, 50, 1.05), # 15
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3, 100, 1.00, 50, 1.05), # 16
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 0.0, 0, 100, 1.00, 50, 1.05), # 17
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 1.0, 3, 100, 1.00, 50, 1.05), # 18
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 0.0, 0, 120, 1.00, 60, 1.05), # 19
+        GameLevel.new("key",       5000, 1.00, 1.00, 0.95, 0.50, 0.60, 0.0, 0, 120, 1.00, 60, 1.05), # 20
+        GameLevel.new("key",       5000, 0.90, 0.90, 0.95, 0.50, 0.60, 0.0, 0, 120, 1.00, 60, 1.05), # 21+
     ]
 
 
@@ -73,6 +73,19 @@ static func get_ghost_fright_speed_pixels(level: int) -> float:
     return get_ghost_fright_speed_tiles(level) * TILE_SIZE
 
 
+static func get_elroy_1_speed_pixels(level: int) -> float:
+    return get_elroy_1_speed_tiles(level) * TILE_SIZE
+
+
+static func get_elroy_2_speed_pixels(level: int) -> float:
+    return get_elroy_2_speed_tiles(level) * TILE_SIZE
+
+
+# A dead ghost returning to the ghost house uses the same speed regardless of level.
+static func get_ghost_eyes_speed_pixels() -> float:
+    return get_ghost_eyes_speed_tiles() * TILE_SIZE
+
+
 static func get_pacman_normal_speed_tiles(level: int) -> float:
     var data := _get_level_data(level)
     return data.pacman_normal_speed_mult * MAX_TILES_PER_SECOND
@@ -97,6 +110,26 @@ static func get_ghost_fright_speed_tiles(level: int) -> float:
     var data := _get_level_data(level)
     return data.ghost_fright_speed_mult * MAX_TILES_PER_SECOND
 
+
+static func get_elroy_1_speed_tiles(level: int) -> float:
+    var data := _get_level_data(level)
+    return data.elroy_1_speed_mult * MAX_TILES_PER_SECOND
+
+
+static func get_elroy_2_speed_tiles(level: int) -> float:
+    var data := _get_level_data(level)
+    return data.elroy_2_speed_mult * MAX_TILES_PER_SECOND
+
+
+static func get_elroy_1_dots(level: int) -> float:
+    var data := _get_level_data(level)
+    return data.elroy_1_dots
+
+
+static func get_elroy_2_dots(level: int) -> float:
+    var data := _get_level_data(level)
+    return data.elroy_2_dots
+    
 
 static func get_fright_time_seconds(level: int) -> float:
     var data := _get_level_data(level)
@@ -136,6 +169,11 @@ class GameLevel:
 
     var fright_time_seconds: float
     var fright_flashes: int
+    
+    var elroy_1_dots: float
+    var elroy_1_speed_mult: float
+    var elroy_2_dots: float
+    var elroy_2_speed_mult: float
 
     func _init(
         fruit_name: String,
@@ -146,7 +184,11 @@ class GameLevel:
         ghost_tunnel_speed_mult: float,
         ghost_fright_speed_mult: float,
         fright_time_seconds: float,
-        fright_flashes: int
+        fright_flashes: int,
+        elroy_1_dots: float,
+        elroy_1_speed_mult: float,
+        elroy_2_dots: float,
+        elroy_2_speed_mult: float
     ) -> void:
         self.fruit_name = fruit_name
         self.fruit_points = fruit_points
@@ -157,3 +199,7 @@ class GameLevel:
         self.ghost_fright_speed_mult = ghost_fright_speed_mult
         self.fright_time_seconds = fright_time_seconds
         self.fright_flashes = fright_flashes
+        self.elroy_1_dots = elroy_1_dots
+        self.elroy_1_speed_mult = elroy_1_speed_mult
+        self.elroy_2_dots = elroy_2_dots
+        self.elroy_2_speed_mult = elroy_2_speed_mult

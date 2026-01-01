@@ -38,6 +38,7 @@ var _is_playing: bool = false
 var _level: int
 var _is_frightened: bool
 var _state: State
+var _elroy_mode: int
 var _cell: Vector2i
 var _direction := Vector2i.LEFT
 
@@ -95,6 +96,7 @@ func _move_towards_next_cell(delta: float) -> bool:
 
 func on_start_level(level: int) -> void:
     _level = level
+    _elroy_mode = 0
 
 
 func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
@@ -146,7 +148,7 @@ func is_frightened() -> bool:
     return _is_frightened
 
 
-func leave_house():
+func leave_house() -> void:
     _direction_when_active = _direction
     if position == maze.get_ghost_home_center_position():
         _next_cell_center = maze.get_ghost_home_exit_position()
@@ -156,6 +158,10 @@ func leave_house():
         var direction = Vector2i.LEFT if position.x > _next_cell_center.x else Vector2i.RIGHT
         _update_direction(direction)
     _update_state(State.LEAVE_HOUSE)
+
+
+func set_elroy_mode(elroy_mode: int) -> void:
+    _elroy_mode = elroy_mode
 
 
 # -----------------------------------------------
@@ -205,6 +211,10 @@ func _get_speed():
         return LevelData.get_ghost_tunnel_speed_pixels(_level)
     if _is_frightened:
         return LevelData.get_ghost_fright_speed_pixels(_level)
+    if _elroy_mode == 2:
+        return LevelData.get_elroy_2_speed_pixels(_level)
+    if _elroy_mode == 1:
+        return LevelData.get_elroy_1_speed_pixels(_level)
     return LevelData.get_ghost_normal_speed_pixels(_level)
 
 
@@ -338,7 +348,7 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
 func _get_target_cell() -> Vector2i:
     if _state == State.RETURN_HOUSE:
         return maze.get_ghost_home_target_cell()
-    if ghost_mode.get_mode() == GhostMode.Mode.SCATTER:
+    if ghost_mode.get_mode() == GhostMode.Mode.SCATTER and _elroy_mode == 0:
         return scatter_target
     return chase_target.call()
 
