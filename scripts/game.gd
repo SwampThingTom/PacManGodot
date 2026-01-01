@@ -2,7 +2,7 @@ class_name Game
 extends Node2D
 ## Manages a single Pac-Man game.
 ##
-## Tracks number of players, current player, scores, and level.
+## Tracks number of players, current player, scores, lives, and level.
 
 enum State {
     START_GAME,
@@ -18,6 +18,7 @@ const PELLET_POINTS = 10
 const POWER_PELLET_POINTS = 50
 const INITIAL_GHOST_POINTS = 200
 const GHOST_SCORE_FREEZE_SECONDS = 0.25
+const EXTRA_LIFE_SCORE = 10_000
 
 @export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
 @export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
@@ -26,6 +27,7 @@ var _state: State = State.START_GAME
 var _level: int = 1
 var _current_player: int = 0
 var _lives_remaining: int = 2
+var _was_extra_life_scored: bool = false
 var _high_score: int = 0
 var _scores: Array[int]
 var _next_ghost_points: int = INITIAL_GHOST_POINTS
@@ -250,6 +252,8 @@ func _on_ghost_eaten(ghost: Ghost):
 # -----------------------------------------------
    
 func _reset_scores() -> void:
+    _lives_remaining = 2
+    _was_extra_life_scored = false
     _scores = [0, 0]
     scores_text.clear_player_score(0)
 
@@ -281,6 +285,11 @@ func _update_current_player_score(points: int) -> void:
     if current_score > _high_score:
         _high_score = current_score
         scores_text.draw_high_score(current_score)
+    
+    if not _was_extra_life_scored and current_score >= EXTRA_LIFE_SCORE:
+        _was_extra_life_scored = true
+        _lives_remaining += 1
+        level_hud.update_lives(_lives_remaining)
 
 
 func _show_ghost_points(ghost: Ghost, points: int) -> void:
