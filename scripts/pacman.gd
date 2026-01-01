@@ -118,13 +118,13 @@ func _on_pellet_eaten(is_power_pellet: bool):
 # -----------------------------------------------
 
 func _handle_input() -> void:
-    if Input.is_action_just_pressed("move_left"):
+    if Input.is_action_pressed("move_left"):
         _desired_direction = Vector2i.LEFT
-    elif Input.is_action_just_pressed("move_right"):
+    elif Input.is_action_pressed("move_right"):
         _desired_direction = Vector2i.RIGHT
-    elif Input.is_action_just_pressed("move_up"):
+    elif Input.is_action_pressed("move_up"):
         _desired_direction = Vector2i.UP
-    elif Input.is_action_just_pressed("move_down"):
+    elif Input.is_action_pressed("move_down"):
         _desired_direction = Vector2i.DOWN
 
 
