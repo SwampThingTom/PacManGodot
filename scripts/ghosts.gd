@@ -61,6 +61,7 @@ var _global_count: int = 0
 # Ensures ghosts leave the house orderly
 var _exit_queue: Array[int] = []
 var _is_ghost_exiting := false
+var _clear_exit_queue := false
 
 
 # -----------------------------------------------
@@ -112,6 +113,7 @@ func on_playing() -> void:
 
 
 func on_player_died() -> void:
+    _reset_exit_queue()
     for ghost in _ghosts:
         ghost.on_player_died()
     
@@ -123,6 +125,7 @@ func on_player_died() -> void:
 
 
 func on_level_complete() -> void:
+    _reset_exit_queue()
     for ghost in _ghosts:
         ghost.on_level_complete()
 
@@ -246,14 +249,23 @@ func _run_exit_queue() -> void:
 
     while _exit_queue.size() > 0:
         var id: int = _exit_queue.pop_front()
+        if _clear_exit_queue:
+            continue
+
         var ghost: Ghost = _ghosts[id]
         assert(ghost.is_in_house(), "Ghost is not in the house")
         ghost.leave_house()
         await _wait_until_exited(ghost)
 
     _is_ghost_exiting = false
+    _clear_exit_queue = false
+
+
+func _reset_exit_queue() -> void:
+    if _is_ghost_exiting:
+        _clear_exit_queue = true
 
 
 func _wait_until_exited(ghost: Ghost) -> void:
-    while is_instance_valid(ghost) and not ghost.is_active():
+    while not ghost.is_active() and not _clear_exit_queue:
         await get_tree().process_frame
