@@ -94,6 +94,7 @@ func _start_level() -> void:
     # Reset level-specific data.
     print("START_LEVEL ", _level)
     level_hud.update_fruits(_level)
+    pellets.reset_pellets()
     _pacman.on_start_level(_level)
     ghost_mode.on_start_level(_level)
     ghosts.on_start_level(_level)
@@ -144,6 +145,9 @@ func _level_complete() -> void:
     _pacman.on_level_complete()
     ghost_mode.on_level_complete()
     ghosts.on_level_complete()
+    await _run_level_complete_sequence()
+    _level += 1
+    _transition_to(State.START_LEVEL)
 
 
 func _game_over() -> void:
@@ -169,6 +173,14 @@ func _run_death_sequence() -> void:
     ghosts.hide_all()
     await _pacman.play_death_animation()
     _pacman.hide()
+    await get_tree().create_timer(1.0).timeout
+
+
+func _run_level_complete_sequence() -> void:
+    await get_tree().create_timer(1.0).timeout
+    ghosts.hide_all()
+    _pacman.hide()
+    # TODO: blink map white
     await get_tree().create_timer(1.0).timeout
 
 
