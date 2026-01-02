@@ -34,10 +34,6 @@ func _process(delta: float) -> void:
 # Game Lifecycle
 # -----------------------------------------------
 
-func on_start_game(blinky: GhostActor, pinky: GhostActor, inky: GhostActor, clyde: GhostActor) -> void:
-    pass
-
-
 func on_start_level(level: int) -> void:
     _level = level
     _pellets_eaten = 0
@@ -48,16 +44,9 @@ func on_start_round() -> void:
     _hide_points()
 
 
-func on_playing() -> void:
-    pass
-
-
-func on_player_died() -> void:
-    pass
-
-
-func on_level_complete() -> void:
-    pass
+func on_game_over() -> void:
+    _hide_fruit()
+    _hide_points()
 
 
 # -----------------------------------------------
