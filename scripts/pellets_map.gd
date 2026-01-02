@@ -5,7 +5,7 @@ extends TileMapLayer
 signal pellet_eaten(is_power_pellet: bool, pellets_remaining: int)
 
 var _pellets_remaining: int
-var _snapshot: Array[Dictionary] = []
+var _snapshot: Array[PelletSnapshot] = []
 
 
 func _ready() -> void:

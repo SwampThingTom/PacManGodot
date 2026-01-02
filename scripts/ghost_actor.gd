@@ -98,16 +98,16 @@ func on_start_level(level: int) -> void:
     _level = level
 
 
-func on_start_round(start_position: Vector2, is_in_house: bool) -> void:
+func on_start_round(start_position: Vector2, start_in_house: bool) -> void:
     _start_position = start_position
-    _start_in_house = is_in_house
+    _start_in_house = start_in_house
     
     # Reseed rng every round
     _rng.seed = 0
 
-    position = start_position
+    position = _start_position
     _is_frightened = false
-    _update_state(State.IN_HOUSE if is_in_house else State.ACTIVE)
+    _update_state(State.IN_HOUSE if _start_in_house else State.ACTIVE)
     _elroy_mode = 0
     _cell = maze.get_cell(position)
     _update_direction(Vector2i.LEFT)
@@ -169,7 +169,7 @@ func set_elroy_mode(elroy_mode: int) -> void:
 # Event Handlers
 # -----------------------------------------------
 
-func _on_mode_changed(new_mode: GhostModeController.Mode) -> void:
+func _on_mode_changed(_new_mode: GhostModeController.Mode) -> void:
     _reverse_direction()
 
 

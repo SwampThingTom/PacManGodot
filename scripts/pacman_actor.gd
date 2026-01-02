@@ -110,7 +110,7 @@ func play_death_animation() -> void:
 # Event Handlers
 # -----------------------------------------------
 
-func _on_pellet_eaten(is_power_pellet: bool):
+func _on_pellet_eaten(is_power_pellet: bool, _pellets_remaining: int):
     _pause_frames = 3 if is_power_pellet else 1
 
 
