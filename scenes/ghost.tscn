@@ -1,10 +1,13 @@
 [gd_scene load_steps=3 format=3 uid="uid://dpdwtlkxx3uth"]
 
-[ext_resource type="Script" uid="uid://cgifvfbhla5bc" path="res://scripts/ghost.gd" id="1_l5lq6"]
+[ext_resource type="Script" uid="uid://cgifvfbhla5bc" path="res://scripts/ghost_actor.gd" id="1_l5lq6"]
 [ext_resource type="SpriteFrames" uid="uid://cbpsr2vfcol2m" path="res://resources/blinky.tres" id="2_l5lq6"]
 
 [node name="Ghost" type="Node2D"]
 script = ExtResource("1_l5lq6")
+ghost_id = null
+chase_target = null
+scatter_target = null
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_l5lq6")

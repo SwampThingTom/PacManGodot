@@ -1,4 +1,4 @@
-class_name ScoresText
+class_name ScoresRenderer
 extends TileMapLayer
 ## Renders the scores for each player as well as the high score.
 

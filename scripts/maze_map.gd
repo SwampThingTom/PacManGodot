@@ -1,4 +1,4 @@
-class_name Maze
+class_name MazeMap
 extends TileMapLayer
 ## Provides pathfinding data for navigating the maze.
 

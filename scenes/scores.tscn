@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=4 uid="uid://cxl7utu3rb5ot"]
 
 [ext_resource type="TileSet" uid="uid://cq64dc66dovio" path="res://resources/font.tres" id="1_ahhtf"]
-[ext_resource type="Script" uid="uid://dokjaos7b4bsi" path="res://scripts/scores.gd" id="2_p8jrb"]
+[ext_resource type="Script" uid="uid://dokjaos7b4bsi" path="res://scripts/scores_renderer.gd" id="2_p8jrb"]
 
 [node name="Scores" type="TileMapLayer"]
 tile_map_data = PackedByteArray("AAADAAAAAAABAAIAAAAJAAAAAAAHAAAAAAAKAAAAAAAIAAAAAAAMAAAAAAAHAAAAAAAOAAAAAAADAAEAAAAPAAAAAAACAAAAAAAQAAAAAAAOAAAAAAAEAAAAAAAFAAEAAAAFAAAAAAAAAAEAAAALAAAAAAAGAAAAAAARAAAAAAACAAEAAAASAAAAAAAEAAAAAAAFAAEAAAAAAAIAAAAGAAEAAAAAAAIAAAAPAAEAAAAAAAIAAAAQAAEAAAAAAAIAAAA=")

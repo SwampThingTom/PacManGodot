@@ -1,18 +1,19 @@
-class_name Game
+class_name GameController
 extends Node2D
-## Manages a single Pac-Man game.
+## Orchestrates a single Pac-Man game.
 ##
-## Tracks number of players, current player, scores, lives, and level.
+## Manages the number of players, current player, scores, lives, level, etc.
+## Detects collisions after all actors have moved.
 
 enum State {
-    START_GAME,
-    START_LEVEL,
-    START_PLAYER,
-    START_ROUND,
-    PLAYING,
-    PLAYER_DIED,
-    LEVEL_COMPLETE,
-    GAME_OVER,
+    START_GAME,          # initialize a new game, spawn actors, reset scores
+    START_LEVEL,         # reset state for a new level
+    START_PLAYER,        # reset state for new player and notify user
+    START_ROUND,         # reset state for new round and notify user
+    PLAYING,             # play the game
+    PLAYER_DIED,         # update state for player death and show animation
+    LEVEL_COMPLETE,      # update state for completion of level
+    GAME_OVER,           # game is over: notify user and return to title scene
 }
 
 const TITLE_SCENE_PATH := "res://scenes/title.tscn"
@@ -31,20 +32,20 @@ var _was_extra_life_scored: bool = false
 var _high_score: int = 0
 var _scores: Array[int]
 var _next_ghost_points: int = INITIAL_GHOST_POINTS
-var _pacman: PacMan
-var _targeting: GhostTargeting
+var _pacman: PacManActor
+var _targeting: GhostTargetingService
 
-@onready var maze: TileMapLayer = $Maze
-@onready var pellets: Pellets = $Pellets
-@onready var fruit: Fruit = $Fruit
-@onready var player_one_text: TileMapLayer = $PlayerOneText
-@onready var ready_text: TileMapLayer = $ReadyText
-@onready var game_over_text: TileMapLayer = $GameOverText
-@onready var scores_text: ScoresText = $ScoresText
-@onready var level_hud: LevelHud = $LevelHud
-@onready var ghost_mode: GhostMode = $GhostMode
-@onready var ghosts: Ghosts = $Ghosts
-@onready var ghost_points: GhostPoints = $GhostPoints
+@onready var maze: TileMapLayer = $MazeMap
+@onready var pellets: PelletsMap = $PelletsMap
+@onready var fruit: BonusFruitActor = $BonusFruitActor
+@onready var player_one_text_renderer: TileMapLayer = $PlayerOneTextRenderer
+@onready var ready_text_renderer: TileMapLayer = $ReadyTextRenderer
+@onready var game_over_text_renderer: TileMapLayer = $GameOverTextRenderer
+@onready var scores_renderer: ScoresRenderer = $ScoresRenderer
+@onready var status_renderer: StatusRenderer = $StatusRenderer
+@onready var ghost_mode: GhostModeController = $GhostModeController
+@onready var ghost_coordinator: GhostCoordinator = $GhostCoordinator
+@onready var ghost_points_sprite: PointsSprite = $PointsSprite
 @onready var freeze_timer: Timer = $FreezeTimer # used while showing ghost points
 
 
@@ -99,11 +100,11 @@ func _start_game() -> void:
 
 func _start_level() -> void:
     print("START_LEVEL ", _level)
-    level_hud.update_fruits(_level)
+    status_renderer.update_fruits(_level)
     pellets.reset_pellets()
     _pacman.on_start_level(_level)
     ghost_mode.on_start_level(_level)
-    ghosts.on_start_level(_level)
+    ghost_coordinator.on_start_level(_level)
     fruit.on_start_level(_level)
     if _show_start_player:
         _transition_to(State.START_PLAYER)
@@ -122,7 +123,7 @@ func _start_round() -> void:
     print("START_ROUND")
     _pacman.on_start_round()
     ghost_mode.on_start_round()
-    ghosts.on_start_round()
+    ghost_coordinator.on_start_round()
     fruit.on_start_round()
     await _show_ready_sequence()
     _transition_to(State.PLAYING)
@@ -132,14 +133,14 @@ func _playing() -> void:
     print("PLAYING")
     _pacman.on_playing()
     ghost_mode.on_playing()
-    ghosts.on_playing()
+    ghost_coordinator.on_playing()
 
 
 func _player_died() -> void:
     print("PLAYER_DIED")
     _pacman.on_player_died()
     ghost_mode.on_player_died()
-    ghosts.on_player_died()
+    ghost_coordinator.on_player_died()
     await _run_death_sequence()
     
     if _lives_remaining <= 0:
@@ -154,7 +155,7 @@ func _level_complete() -> void:
     print("LEVEL_COMPLETE")
     _pacman.on_level_complete()
     ghost_mode.on_level_complete()
-    ghosts.on_level_complete()
+    ghost_coordinator.on_level_complete()
     await _run_level_complete_sequence()
     _level += 1
     _transition_to(State.START_LEVEL)
@@ -171,24 +172,24 @@ func _game_over() -> void:
 # -----------------------------------------------
 
 func _show_start_player_sequence() -> void:
-    player_one_text.show()
-    ready_text.show()
+    player_one_text_renderer.show()
+    ready_text_renderer.show()
     await get_tree().create_timer(2.0).timeout
-    player_one_text.hide()
+    player_one_text_renderer.hide()
 
     
 func _show_ready_sequence() -> void:
-    ready_text.show()
-    level_hud.update_lives(_lives_remaining)
+    ready_text_renderer.show()
+    status_renderer.update_lives(_lives_remaining)
     _pacman.show()
-    ghosts.show_all()
+    ghost_coordinator.show_all()
     await get_tree().create_timer(1.6).timeout
-    ready_text.hide()
+    ready_text_renderer.hide()
 
 
 func _run_death_sequence() -> void:
     await get_tree().create_timer(1.0).timeout
-    ghosts.hide_all()
+    ghost_coordinator.hide_all()
     await _pacman.play_death_animation()
     _pacman.hide()
     await get_tree().create_timer(1.0).timeout
@@ -196,14 +197,14 @@ func _run_death_sequence() -> void:
 
 func _run_level_complete_sequence() -> void:
     await get_tree().create_timer(1.0).timeout
-    ghosts.hide_all()
+    ghost_coordinator.hide_all()
     _pacman.hide()
     # TODO: blink map white
     await get_tree().create_timer(1.0).timeout
 
 
 func _run_game_over_sequence() -> void:
-    game_over_text.show()
+    game_over_text_renderer.show()
     await get_tree().create_timer(5.0).timeout
 
 
@@ -228,7 +229,7 @@ func _check_fruit_collision() -> void:
 
 func _check_ghost_collisions() -> void:
     var pacman_cell := _pacman.get_cell()
-    for ghost in ghosts.get_ghosts():
+    for ghost in ghost_coordinator.get_ghosts():
         if not ghost.is_active():
             continue
         if ghost.get_cell() == pacman_cell:
@@ -236,7 +237,7 @@ func _check_ghost_collisions() -> void:
             return
 
 
-func _on_collision(ghost: Ghost) -> void:
+func _on_collision(ghost: GhostActor) -> void:
     if ghost.is_frightened():
         _on_ghost_eaten(ghost)
     else:
@@ -250,7 +251,7 @@ func _on_collision(ghost: Ghost) -> void:
 func _on_pellet_eaten(is_power_pellet: bool, pellets_remaining: int):
     var points := POWER_PELLET_POINTS if is_power_pellet else PELLET_POINTS
     _update_current_player_score(points)
-    ghosts.on_pellet_eaten(pellets_remaining)
+    ghost_coordinator.on_pellet_eaten(pellets_remaining)
     fruit.on_pellet_eaten()
     
     if is_power_pellet:
@@ -261,7 +262,7 @@ func _on_pellet_eaten(is_power_pellet: bool, pellets_remaining: int):
         _transition_to(State.LEVEL_COMPLETE)
 
 
-func _on_ghost_eaten(ghost: Ghost):
+func _on_ghost_eaten(ghost: GhostActor):
     _update_current_player_score(_next_ghost_points)
     await _show_ghost_points(ghost, _next_ghost_points)
     ghost.on_eaten()
@@ -276,7 +277,7 @@ func _reset_scores() -> void:
     _lives_remaining = 2
     _was_extra_life_scored = false
     _scores = [0, 0]
-    scores_text.clear_player_score(0)
+    scores_renderer.clear_player_score(0)
 
 
 func _spawn_actors() -> void:
@@ -286,8 +287,8 @@ func _spawn_actors() -> void:
     _pacman = actor_factory.make_pacman(pellets)
     add_child(_pacman)
 
-    _targeting = GhostTargeting.new(_pacman, ghosts, false)
-    ghosts.on_start_game(
+    _targeting = GhostTargetingService.new(_pacman, ghost_coordinator, false)
+    ghost_coordinator.on_start_game(
         actor_factory.make_blinky(ghost_mode, _targeting), 
         actor_factory.make_pinky(ghost_mode, _targeting), 
         actor_factory.make_inky(ghost_mode, _targeting), 
@@ -301,26 +302,26 @@ func _connect_signals() -> void:
 func _update_current_player_score(points: int) -> void:
     _scores[_current_player] += points
     var current_score := _scores[_current_player]
-    scores_text.draw_player_score(_current_player, current_score)
+    scores_renderer.draw_player_score(_current_player, current_score)
     
     if current_score > _high_score:
         _high_score = current_score
-        scores_text.draw_high_score(current_score)
+        scores_renderer.draw_high_score(current_score)
     
     if not _was_extra_life_scored and current_score >= EXTRA_LIFE_SCORE:
         _was_extra_life_scored = true
         _lives_remaining += 1
-        level_hud.update_lives(_lives_remaining)
+        status_renderer.update_lives(_lives_remaining)
 
 
-func _show_ghost_points(ghost: Ghost, points: int) -> void:
+func _show_ghost_points(ghost: GhostActor, points: int) -> void:
     _pacman.hide()
     ghost.hide()
 
-    ghost_points.position = maze.get_center_of_cell(ghost.get_cell())
-    ghost_points.show_points(points)
+    ghost_points_sprite.position = maze.get_center_of_cell(ghost.get_cell())
+    ghost_points_sprite.show_points(points)
     await _freeze_game(GHOST_SCORE_FREEZE_SECONDS)
-    ghost_points.hide()
+    ghost_points_sprite.hide()
 
     ghost.show()
     _pacman.show()

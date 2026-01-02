@@ -1,4 +1,4 @@
-class_name LevelHud
+class_name StatusRenderer
 extends Node2D
 ## Manages the number of extra lives and the fruits displayed below the maze.
 

@@ -15,15 +15,15 @@ const EYES_FRAMES   := preload("res://resources/eyes.tres")
 const Z_INDEX_PAC_MAN := 10
 const Z_INDEX_GHOSTS  := 20
 
-var _maze: Maze
+var _maze: MazeMap
 
 
-func _init(maze: Maze) -> void:
+func _init(maze: MazeMap) -> void:
     _maze = maze
 
 
-func make_pacman(pellets: Pellets) -> PacMan:
-    var pacman: PacMan = PACMAN_SCENE.instantiate()
+func make_pacman(pellets: PelletsMap) -> PacManActor:
+    var pacman: PacManActor = PACMAN_SCENE.instantiate()
     pacman.maze = _maze
     pacman.pellets = pellets
     pacman.z_index = Z_INDEX_PAC_MAN
@@ -31,40 +31,40 @@ func make_pacman(pellets: Pellets) -> PacMan:
     return pacman    
 
 
-func make_blinky(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
+func make_blinky(ghost_mode: GhostModeController, targeting: GhostTargetingService) -> GhostActor:
     return _make_ghost(
         "Blinky",
-        Ghosts.GhostId.BLINKY,
+        GhostCoordinator.GhostId.BLINKY,
         BLINKY_FRAMES,
         targeting.blinky_chase_target,
         _maze.get_blinky_scatter_target(),
         ghost_mode)
 
 
-func make_pinky(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
+func make_pinky(ghost_mode: GhostModeController, targeting: GhostTargetingService) -> GhostActor:
     return _make_ghost(
         "Pinky",
-        Ghosts.GhostId.PINKY,
+        GhostCoordinator.GhostId.PINKY,
         PINKY_FRAMES,
         targeting.pinky_chase_target,
         _maze.get_pinky_scatter_target(),
         ghost_mode)
 
 
-func make_inky(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
+func make_inky(ghost_mode: GhostModeController, targeting: GhostTargetingService) -> GhostActor:
     return _make_ghost(
         "Inky",
-        Ghosts.GhostId.INKY,
+        GhostCoordinator.GhostId.INKY,
         INKY_FRAMES,
         targeting.inky_chase_target,
         _maze.get_inky_scatter_target(),
         ghost_mode)
 
 
-func make_clyde(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
+func make_clyde(ghost_mode: GhostModeController, targeting: GhostTargetingService) -> GhostActor:
     return _make_ghost(
         "Clyde",
-        Ghosts.GhostId.CLYDE,
+        GhostCoordinator.GhostId.CLYDE,
         CLYDE_FRAMES,
         targeting.clyde_chase_target,
         _maze.get_clyde_scatter_target(),
@@ -73,18 +73,18 @@ func make_clyde(ghost_mode: GhostMode, targeting: GhostTargeting) -> Ghost:
 
 func _make_ghost(
     name: String, 
-    ghost_id: Ghosts.GhostId,
+    ghost_id: GhostCoordinator.GhostId,
     animations: SpriteFrames, 
     chase_target: Callable, 
     scatter_target: Vector2i, 
-    ghost_mode: GhostMode
-) -> Ghost:
-    var ghost: Ghost = GHOST_SCENE.instantiate()
+    ghost_mode_controller: GhostModeController
+) -> GhostActor:
+    var ghost: GhostActor = GHOST_SCENE.instantiate()
     ghost.name = name
     ghost.ghost_id = ghost_id
     ghost.chase_target = chase_target
     ghost.scatter_target = scatter_target
-    ghost.ghost_mode = ghost_mode
+    ghost.ghost_mode_controller = ghost_mode_controller
     ghost.normal_animations = animations
     ghost.frightened_animations = FRIGHT_FRAMES
     ghost.flash_animations = FLASH_FRAMES

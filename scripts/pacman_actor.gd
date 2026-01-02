@@ -1,11 +1,11 @@
-class_name PacMan
+class_name PacManActor
 extends Node2D
 ## Manages the Pac-Man actor.
 ##
 ## Moves Pac-Man around the maze based on user input.
 
-@export var maze: Maze
-@export var pellets: Pellets
+@export var maze: MazeMap
+@export var pellets: PelletsMap
 
 var _is_playing: bool = false
 var _level: int = 1

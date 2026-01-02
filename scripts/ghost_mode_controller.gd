@@ -1,4 +1,4 @@
-class_name GhostMode
+class_name GhostModeController
 extends Node
 ## Manages the current ghost mode (scatter, chase, or frightened).
 

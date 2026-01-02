@@ -1,10 +1,10 @@
-class_name Ghost
+class_name GhostActor
 extends Node2D
 ## Manages a Ghost actor.
 ##
 ## Moves a ghost around the maze looking for Pac-Man.
 
-signal revived(ghost_id: Ghosts.GhostId)
+signal revived(ghost_id: GhostCoordinator.GhostId)
 
 enum State {
     IN_HOUSE,
@@ -28,9 +28,9 @@ const CENTER_EPS := 0.05
 @export var flash_animations: SpriteFrames
 @export var eyes_animations: SpriteFrames
 
-@export var maze: Maze
-@export var ghost_mode: GhostMode
-@export var ghost_id: Ghosts.GhostId
+@export var maze: MazeMap
+@export var ghost_mode_controller: GhostModeController
+@export var ghost_id: GhostCoordinator.GhostId
 @export var chase_target: Callable # returns a Vector2i for target cell
 @export var scatter_target: Vector2i
 
@@ -55,9 +55,9 @@ var _rng = RandomNumberGenerator.new()
 @onready var anim := $Sprite
 
 func _ready():
-    ghost_mode.mode_changed.connect(_on_mode_changed)
-    ghost_mode.frightened_changed.connect(_on_frightened_changed)
-    ghost_mode.frightened_flash.connect(_on_frightened_flash)
+    ghost_mode_controller.mode_changed.connect(_on_mode_changed)
+    ghost_mode_controller.frightened_changed.connect(_on_frightened_changed)
+    ghost_mode_controller.frightened_flash.connect(_on_frightened_flash)
     anim.sprite_frames = normal_animations
     anim.pause()
 
@@ -169,7 +169,7 @@ func set_elroy_mode(elroy_mode: int) -> void:
 # Event Handlers
 # -----------------------------------------------
 
-func _on_mode_changed(new_mode: GhostMode.Mode) -> void:
+func _on_mode_changed(new_mode: GhostModeController.Mode) -> void:
     _reverse_direction()
 
 
@@ -354,7 +354,7 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
 func _get_target_cell() -> Vector2i:
     if _state == State.RETURN_HOUSE:
         return maze.get_ghost_home_target_cell()
-    if ghost_mode.get_mode() == GhostMode.Mode.SCATTER and _elroy_mode == 0:
+    if ghost_mode_controller.get_mode() == GhostModeController.Mode.SCATTER and _elroy_mode == 0:
         return scatter_target
     return chase_target.call()
 

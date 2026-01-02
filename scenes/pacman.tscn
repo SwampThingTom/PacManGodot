@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://baxh1n1hx2v21"]
 
-[ext_resource type="Script" uid="uid://c1c7w4ldele7k" path="res://scripts/pacman.gd" id="1_kjyp3"]
+[ext_resource type="Script" uid="uid://c1c7w4ldele7k" path="res://scripts/pacman_actor.gd" id="1_kjyp3"]
 [ext_resource type="SpriteFrames" uid="uid://rvl425bfphht" path="res://resources/pacman.tres" id="2_utpjb"]
 [ext_resource type="Script" uid="uid://cy8em1wqktgij" path="res://scripts/pacman_debug_draw.gd" id="3_utpjb"]
 

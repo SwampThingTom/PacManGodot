@@ -1,4 +1,4 @@
-class_name GhostPoints
+class_name PointsSprite
 extends AnimatedSprite2D
 # Renders the number of points scored for eating a ghost.
 

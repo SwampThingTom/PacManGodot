@@ -1,4 +1,4 @@
-class_name Fruit
+class_name BonusFruitActor
 extends AnimatedSprite2D
 ## Manages the bonus fruit for each level.
 
@@ -7,7 +7,7 @@ const SECOND_FRUIT_COUNT: int = 170
 const FRUIT_AVAILABLE_SECONDS: float = 10.0
 const SCORE_SHOWN_SECONDS: float = 1.0
 
-@export var maze: Maze
+@export var maze: MazeMap
 
 var _level: int
 var _pellets_eaten: int = 0
@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 # Game Lifecycle
 # -----------------------------------------------
 
-func on_start_game(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> void:
+func on_start_game(blinky: GhostActor, pinky: GhostActor, inky: GhostActor, clyde: GhostActor) -> void:
     pass
 
 

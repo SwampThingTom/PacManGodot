@@ -1,4 +1,4 @@
-class_name Ghosts
+class_name GhostCoordinator
 extends Node2D
 ## Controls per-level ghost state, including releasing them from their house.
 ##
@@ -43,10 +43,10 @@ const GLOBAL_PINKY_PELLET_LIMIT := 7
 const GLOBAL_INKY_PELLET_LIMIT := 17
 const GLOBAL_DEACTIVATE_LIMIT := 32
 
-@export var maze: Maze
+@export var maze: MazeMap
 
 # Ghosts in order: blinky, pinky, inky, clyde
-var _ghosts: Array[Ghost]
+var _ghosts: Array[GhostActor]
 
 var _is_playing: bool = false
 var _level: int
@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 # Game Lifecycle
 # -----------------------------------------------
 
-func on_start_game(blinky: Ghost, pinky: Ghost, inky: Ghost, clyde: Ghost) -> void:
+func on_start_game(blinky: GhostActor, pinky: GhostActor, inky: GhostActor, clyde: GhostActor) -> void:
     _is_elroy_paused = false
     _ghosts = [blinky, pinky, inky, clyde]
     add_child(blinky)
@@ -159,11 +159,11 @@ func on_level_complete() -> void:
 # Public Methods
 # -----------------------------------------------
 
-func get_ghosts() -> Array[Ghost]:
+func get_ghosts() -> Array[GhostActor]:
     return _ghosts
 
 
-func get_ghost(ghost_id: GhostId) -> Ghost:
+func get_ghost(ghost_id: GhostId) -> GhostActor:
     return _ghosts[ghost_id]
 
 
@@ -301,7 +301,7 @@ func _run_exit_queue() -> void:
         if _clear_exit_queue:
             continue
 
-        var ghost: Ghost = _ghosts[id]
+        var ghost: GhostActor = _ghosts[id]
         if not ghost.is_in_house():
             continue
 
@@ -324,6 +324,6 @@ func _reset_exit_queue() -> void:
         _exit_queue.clear()
 
 
-func _wait_until_exited(ghost: Ghost) -> void:
+func _wait_until_exited(ghost: GhostActor) -> void:
     while not ghost.is_active() and not _clear_exit_queue:
         await get_tree().process_frame

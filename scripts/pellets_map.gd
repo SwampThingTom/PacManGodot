@@ -1,4 +1,4 @@
-class_name Pellets
+class_name PelletsMap
 extends TileMapLayer
 ## Manages the remaining pellets in the maze.
 
