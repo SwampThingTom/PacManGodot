@@ -224,7 +224,7 @@ func _check_collisions() -> void:
 func _check_fruit_collision() -> void:
     if not _fruit.is_available():
         return
-    if _pacman.position.distance_to(_fruit.position) <= 8.0:
+    if _pacman.position.distance_to(_fruit.position) <= 1.0:
         _update_current_player_score(_fruit.get_points())
         _fruit.on_fruit_eaten()
 
