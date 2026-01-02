@@ -27,7 +27,7 @@ var _state: State = State.START_GAME
 var _level: int = 1
 var _show_start_player: bool
 var _current_player: int = 0
-var _lives_remaining: int = 2
+var _extra_lives: int = 2 # number of lives after the current one
 var _was_extra_life_scored: bool = false
 var _high_score: int = 0
 var _scores: Array[int]
@@ -142,11 +142,11 @@ func _player_died() -> void:
     ghost_coordinator.on_player_died()
     await _run_death_sequence()
     
-    if _lives_remaining <= 0:
+    if _extra_lives <= 0:
         _transition_to(State.GAME_OVER)
         return
 
-    _lives_remaining -= 1
+    _extra_lives -= 1
     _transition_to(State.START_ROUND)
 
 
@@ -179,7 +179,7 @@ func _show_start_player_sequence() -> void:
     
 func _show_ready_sequence() -> void:
     ready_text_renderer.show()
-    status_renderer.update_lives(_lives_remaining)
+    status_renderer.update_lives(_extra_lives)
     _pacman.show()
     ghost_coordinator.show_all()
     await get_tree().create_timer(1.6).timeout
@@ -273,7 +273,7 @@ func _on_ghost_eaten(ghost: GhostActor):
 # -----------------------------------------------
    
 func _reset_scores() -> void:
-    _lives_remaining = 2
+    _extra_lives = 2
     _was_extra_life_scored = false
     _scores = [0, 0]
     scores_renderer.clear_player_score(0)
@@ -309,8 +309,8 @@ func _update_current_player_score(points: int) -> void:
     
     if not _was_extra_life_scored and current_score >= EXTRA_LIFE_SCORE:
         _was_extra_life_scored = true
-        _lives_remaining += 1
-        status_renderer.update_lives(_lives_remaining)
+        _extra_lives += 1
+        status_renderer.update_lives(_extra_lives)
 
 
 func _show_ghost_points(ghost: GhostActor, points: int) -> void:
