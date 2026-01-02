@@ -8,8 +8,8 @@ signal revived(ghost_id: GhostCoordinator.GhostId)
 
 enum State {
     IN_HOUSE,
-    LEAVE_HOUSE,
-    RETURN_HOUSE,
+    LEAVING_HOUSE,
+    RETURNING_TO_HOUSE,
     ACTIVE
 }
 
@@ -158,7 +158,7 @@ func leave_house() -> void:
         _next_cell_center = maze.get_ghost_home_center_position()
         var direction = Vector2i.LEFT if position.x > _next_cell_center.x else Vector2i.RIGHT
         _update_direction(direction)
-    _update_state(State.LEAVE_HOUSE)
+    _update_state(State.LEAVING_HOUSE)
 
 
 func set_elroy_mode(elroy_mode: int) -> void:
@@ -177,7 +177,7 @@ func _on_frightened_changed(new_is_frightened: bool) -> void:
     if _is_frightened == new_is_frightened:
         return
 
-    if _state == State.RETURN_HOUSE:
+    if _state == State.RETURNING_TO_HOUSE:
         return
 
     _is_frightened = new_is_frightened
@@ -196,7 +196,7 @@ func _on_frightened_flash(flash_white: bool) -> void:
 func on_eaten() -> void:
     assert(_is_frightened, "Ghost eaten when not frightened")
     _is_frightened = false
-    _update_state(State.RETURN_HOUSE)
+    _update_state(State.RETURNING_TO_HOUSE)
 
 
 # -----------------------------------------------
@@ -211,7 +211,7 @@ func _reverse_direction() -> void:
 
 
 func _get_speed():
-    if _state == State.RETURN_HOUSE:
+    if _state == State.RETURNING_TO_HOUSE:
         return LevelData.get_ghost_eyes_speed_pixels()
     if maze.is_in_tunnel(_cell):
         return LevelData.get_ghost_tunnel_speed_pixels(_level)
@@ -249,9 +249,9 @@ func _determine_next_cell() -> void:
     match _state:
         State.IN_HOUSE:
             return
-        State.LEAVE_HOUSE:
+        State.LEAVING_HOUSE:
             _determine_next_cell_leaving_house()
-        State.RETURN_HOUSE:
+        State.RETURNING_TO_HOUSE:
             _determine_next_cell_returning_house()
         State.ACTIVE:
             _determine_next_cell_active()
@@ -352,7 +352,7 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
 
 
 func _get_target_cell() -> Vector2i:
-    if _state == State.RETURN_HOUSE:
+    if _state == State.RETURNING_TO_HOUSE:
         return maze.get_ghost_home_target_cell()
     if ghost_mode_controller.get_mode() == GhostModeController.Mode.SCATTER and _elroy_mode == 0:
         return scatter_target
@@ -382,7 +382,7 @@ func _update_state(new_state: State) -> void:
 
 
 func _update_animation() -> void:
-    if _state == State.RETURN_HOUSE:
+    if _state == State.RETURNING_TO_HOUSE:
         anim.sprite_frames = eyes_animations
     elif _is_frightened:
         anim.sprite_frames = frightened_animations
