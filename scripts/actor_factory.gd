@@ -75,14 +75,14 @@ func _make_ghost(
     name: String, 
     ghost_id: GhostCoordinator.GhostId,
     animations: SpriteFrames, 
-    chase_target: Callable, 
+    chase_target_fn: Callable, 
     scatter_target: Vector2i, 
     ghost_mode_controller: GhostModeController
 ) -> GhostActor:
     var ghost: GhostActor = GHOST_SCENE.instantiate()
     ghost.name = name
     ghost.ghost_id = ghost_id
-    ghost.chase_target = chase_target
+    ghost.chase_target_fn = chase_target_fn
     ghost.scatter_target = scatter_target
     ghost.ghost_mode_controller = ghost_mode_controller
     ghost.normal_animations = animations

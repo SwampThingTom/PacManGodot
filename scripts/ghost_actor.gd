@@ -31,7 +31,7 @@ var eyes_animations: SpriteFrames
 var maze: MazeMap
 var ghost_mode_controller: GhostModeController
 var ghost_id: GhostCoordinator.GhostId
-var chase_target: Callable # returns a Vector2i for target cell
+var chase_target_fn: Callable # returns a Vector2i for target cell
 var scatter_target: Vector2i
 
 var _is_playing: bool = false
@@ -356,7 +356,7 @@ func _get_target_cell() -> Vector2i:
         return maze.get_ghost_home_target_cell()
     if ghost_mode_controller.get_mode() == GhostModeController.Mode.SCATTER and _elroy_mode == 0:
         return scatter_target
-    return chase_target.call()
+    return chase_target_fn.call()
 
 
 func _update_direction(new_direction: Vector2i):
