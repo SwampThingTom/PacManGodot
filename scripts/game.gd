@@ -7,6 +7,7 @@ extends Node2D
 enum State {
     START_GAME,
     START_LEVEL,
+    START_PLAYER,
     START_ROUND,
     PLAYING,
     PLAYER_DIED,
@@ -21,11 +22,9 @@ const INITIAL_GHOST_POINTS = 200
 const GHOST_SCORE_FREEZE_SECONDS = 0.25
 const EXTRA_LIFE_SCORE = 10_000
 
-@export var spawn_duration_sec: float = 3.0 # Seconds to wait before spawning Pac-Man & ghosts
-@export var ready_duration_sec: float = 1.0 # Seconds after spawning before start of game
-
 var _state: State = State.START_GAME
 var _level: int = 1
+var _show_start_player: bool
 var _current_player: int = 0
 var _lives_remaining: int = 2
 var _was_extra_life_scored: bool = false
@@ -38,6 +37,7 @@ var _targeting: GhostTargeting
 @onready var maze: TileMapLayer = $Maze
 @onready var pellets: Pellets = $Pellets
 @onready var fruit: Fruit = $Fruit
+@onready var player_one_text: TileMapLayer = $PlayerOneText
 @onready var ready_text: TileMapLayer = $ReadyText
 @onready var game_over_text: TileMapLayer = $GameOverText
 @onready var scores_text: ScoresText = $ScoresText
@@ -73,6 +73,8 @@ func _enter_state(s: State) -> void:
     match s:
         State.START_LEVEL:
             _start_level()
+        State.START_PLAYER:
+            _start_player()
         State.START_ROUND:
             _start_round()
         State.PLAYING:
@@ -88,6 +90,7 @@ func _enter_state(s: State) -> void:
 func _start_game() -> void:
     # Initialize game.
     _level = 1
+    _show_start_player = true
     _spawn_actors()
     _connect_signals()
     _reset_scores()
@@ -95,7 +98,6 @@ func _start_game() -> void:
 
 
 func _start_level() -> void:
-    # Reset level-specific data.
     print("START_LEVEL ", _level)
     level_hud.update_fruits(_level)
     pellets.reset_pellets()
@@ -103,11 +105,20 @@ func _start_level() -> void:
     ghost_mode.on_start_level(_level)
     ghosts.on_start_level(_level)
     fruit.on_start_level(_level)
+    if _show_start_player:
+        _transition_to(State.START_PLAYER)
+    else:
+        _transition_to(State.START_ROUND)
+
+
+func _start_player() -> void:
+    print("START_PLAYER")
+    _show_start_player = false
+    await _show_start_player_sequence()
     _transition_to(State.START_ROUND)
 
 
 func _start_round() -> void:
-    # Reset round-specific data.
     print("START_ROUND")
     _pacman.on_start_round()
     ghost_mode.on_start_round()
@@ -118,7 +129,6 @@ func _start_round() -> void:
 
 
 func _playing() -> void:
-    # Start playing the next round (timers, counters, movement, etc.)
     print("PLAYING")
     _pacman.on_playing()
     ghost_mode.on_playing()
@@ -126,8 +136,6 @@ func _playing() -> void:
 
 
 func _player_died() -> void:
-    # Stop playing (timers, counters, movement, etc.)
-    # Show death animation
     print("PLAYER_DIED")
     _pacman.on_player_died()
     ghost_mode.on_player_died()
@@ -143,8 +151,6 @@ func _player_died() -> void:
 
 
 func _level_complete() -> void:
-    # Stop playing (timers, counters, movement, etc.)
-    # Start next level
     print("LEVEL_COMPLETE")
     _pacman.on_level_complete()
     ghost_mode.on_level_complete()
@@ -164,13 +170,19 @@ func _game_over() -> void:
 # Transition sequences
 # -----------------------------------------------
 
+func _show_start_player_sequence() -> void:
+    player_one_text.show()
+    ready_text.show()
+    await get_tree().create_timer(2.0).timeout
+    player_one_text.hide()
+
+    
 func _show_ready_sequence() -> void:
     ready_text.show()
-    await get_tree().create_timer(spawn_duration_sec).timeout
     level_hud.update_lives(_lives_remaining)
     _pacman.show()
     ghosts.show_all()
-    await get_tree().create_timer(ready_duration_sec).timeout
+    await get_tree().create_timer(1.6).timeout
     ready_text.hide()
 
 

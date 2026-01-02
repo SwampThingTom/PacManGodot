@@ -102,6 +102,12 @@ z_index = 40
 tile_map_data = PackedByteArray("AAALABQAAAACABkAAAAMABQAAAAEABgAAAANABQAAAAAABgAAAAOABQAAAADABgAAAAPABQAAAAJABkAAAAQABQAAAALABkAAAA=")
 tile_set = ExtResource("5_p57ef")
 
+[node name="PlayerOneText" type="TileMapLayer" parent="."]
+visible = false
+z_index = 40
+tile_map_data = PackedByteArray("AAAJAA4AAAAAAA0AAAAKAA4AAAALAAwAAAALAA4AAAAAAAwAAAAMAA4AAAAJAA0AAAANAA4AAAAEAAwAAAAOAA4AAAACAA0AAAAQAA4AAAAOAAwAAAARAA4AAAANAAwAAAASAA4AAAAEAAwAAAA=")
+tile_set = ExtResource("5_p57ef")
+
 [node name="GameOverText" type="TileMapLayer" parent="."]
 visible = false
 z_index = 40

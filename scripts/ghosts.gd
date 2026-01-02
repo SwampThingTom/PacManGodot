@@ -302,9 +302,10 @@ func _run_exit_queue() -> void:
             continue
 
         var ghost: Ghost = _ghosts[id]
-        assert(ghost.is_in_house(), "Ghost is not in the house")
+        if not ghost.is_in_house():
+            continue
+
         ghost.leave_house()
-        
         if id == GhostId.CLYDE:
             _is_elroy_paused = false
             _check_elroy_mode()
