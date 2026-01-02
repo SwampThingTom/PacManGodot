@@ -17,13 +17,13 @@ const MODE_DURATIONS: Array[Array] = [
     [5.0, 20.0, 5.0, 20.0, 5.0, 1037.0, 0.016],  # Level 5+
 ]
 
-var _running := false
+var _running: bool = false
 var _level: int = 0
 var _duration_index: int = 0
 var _mode_index: int = 0
-var _mode = Mode.SCATTER
+var _mode: Mode = Mode.SCATTER
 var _duration: float = 0.0
-var _is_frightened = false
+var _is_frightened: bool = false
 var _frightened_duration: float = 0.0
 var _next_flash_time: float
 var _next_flash_is_white: bool

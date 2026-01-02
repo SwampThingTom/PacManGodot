@@ -17,11 +17,11 @@ enum State {
 }
 
 const TITLE_SCENE_PATH := "res://scenes/title.tscn"
-const PELLET_POINTS = 10
-const POWER_PELLET_POINTS = 50
-const INITIAL_GHOST_POINTS = 200
-const GHOST_SCORE_FREEZE_SECONDS = 0.25
-const EXTRA_LIFE_SCORE = 10_000
+const PELLET_POINTS: int = 10
+const POWER_PELLET_POINTS: int = 50
+const INITIAL_GHOST_POINTS: int = 200
+const GHOST_SCORE_FREEZE_SECONDS: float = 0.25
+const EXTRA_LIFE_SCORE: int = 10_000
 
 var _state: State = State.START_GAME
 var _level: int = 1

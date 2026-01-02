@@ -8,6 +8,7 @@ var ghosts: GhostCoordinator
 ## If true, applies the original "Pinky/Inky up-direction bug".
 var use_original_bugs: bool = false
 
+
 func _init(pacman: PacManActor, ghosts: GhostCoordinator, use_original_bugs: bool = false) -> void:
     self.pacman = pacman
     self.ghosts = ghosts

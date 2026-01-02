@@ -12,8 +12,8 @@ const FRIGHT_FRAMES := preload("res://resources/frightened.tres")
 const FLASH_FRAMES  := preload("res://resources/flash.tres")
 const EYES_FRAMES   := preload("res://resources/eyes.tres")
 
-const Z_INDEX_PAC_MAN := 10
-const Z_INDEX_GHOSTS  := 20
+const Z_INDEX_PAC_MAN: int = 10
+const Z_INDEX_GHOSTS: int = 20
 
 var _maze: MazeMap
 

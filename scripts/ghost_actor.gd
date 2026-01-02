@@ -21,7 +21,7 @@ const DIRECTIONS: Array[Vector2i] = [
     Vector2i.RIGHT
 ]
 
-const CENTER_EPS := 0.05
+const CENTER_EPS: float = 0.05
 
 @export var normal_animations: SpriteFrames
 @export var frightened_animations: SpriteFrames

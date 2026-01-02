@@ -31,7 +31,7 @@ enum GhostId {
 # The number of pellets that must be eaten before each ghost will exit the house.
 # Only needed for first two levels. From level three on, ghosts will exit immediately.
 # This is only used when the global counter is disabled.
-const INDIVIDUAL_PELLET_LIMITS := [
+const INDIVIDUAL_PELLET_LIMITS: Array[Array] = [
     #  blinky pinky inky clyde
     [      0,    0,   30,   60],  # level 1
     [      0,    0,    0,   50],  # level 2
@@ -39,9 +39,9 @@ const INDIVIDUAL_PELLET_LIMITS := [
 
 # The number of pellets that must be eated before a ghost will exit the house.
 # These are only used when the global counter is enabled.
-const GLOBAL_PINKY_PELLET_LIMIT := 7
-const GLOBAL_INKY_PELLET_LIMIT := 17
-const GLOBAL_DEACTIVATE_LIMIT := 32
+const GLOBAL_PINKY_PELLET_LIMIT: int = 7
+const GLOBAL_INKY_PELLET_LIMIT: int = 17
+const GLOBAL_DEACTIVATE_LIMIT: int = 32
 
 @export var maze: MazeMap
 
@@ -73,8 +73,8 @@ var _inactivity_timer_limit: float
 
 # Ensures ghosts leave the house orderly
 var _exit_queue: Array[int] = []
-var _is_ghost_exiting := false
-var _clear_exit_queue := false
+var _is_ghost_exiting: bool = false
+var _clear_exit_queue: bool = false
 
 
 func _process(delta: float) -> void:
