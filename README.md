@@ -1,70 +1,68 @@
 # Pac-Man Clone
 
-A Pac-Man clone written in Godot.
-The goal is to try to remain as authentic to the original arcade game as possible,
-including the splash screen and between-level intermissions.
-Will ultimately provide options to run with the original bugs (especially Pinky and Inky pathfinding).
+A Pac-Man clone written in [Godot](https://godotengine.org/).
+The goal is to remain as authentic to Namco's original gameplay as possible, including bugs.
 
+## Supported Platforms
 Intended to be cross-platform.
-Hope to support Apple TV and iOS devices in addition to Mac and Windows.
+Should work without trouble on MacOS and Windows (all of my testing has been on MacOS).
+Eventually hope to support Apple TV and iOS devices.
 
-## Classes
+## Architecture
 
-**Title**
-Title scene that simply waits for the user to start a new game.
+### Scenes
 
-**Game**
-Main game controller responsible for tracking level, lives, score, and game state.
-Also responsible for detecting collisions and managing ghost and player death and respawning.
+- Title: Shows a static title screen and waits for any key to start the game.
+- Game: Starts the `GameController` class to play the game.
 
-**ScoresText**
-Renders the player and high scores as tiles from the Font tilesheet.
+### Classes
 
-**ReadyText**
-Renders the word "READY!" when play is about to start.
+`GameController` is the top-level state machine responsible for maintaining the current player, level, round, scores, and detecting collisions.
 
-**Maze**
-TileMapLayer that renders the maze and is the source of truth for everything map-related,
-including walls, tunnel, spawn locations, etc.
+`MazeMap` is the tilemap for the maze and source of truth for which cells are open.
 
-**Pellets**
-TileMapLayer that renders the pellets (dots) and power pellets.
-Signals events when a pellet is eaten and when all of the pellets have been eated.
+`PelletsMap` is the tilemap for the pellets and source of truth for which cells have which kind of pellet.
 
-**GhostPoints**
-A sprite that renders the number of points scored for eating a ghost.
+`PacManActor` takes input from the user and moves the Pac-Man sprite accordingly. Also responsible for detecting that a pellet was eaten.
 
-**FreezeTimer**
-A timer used to freeze everything while GhostPoints is shown.
+`GhostActor` moves the ghost through the maze based on current state, mode, and frightened status.
 
-**GhostMode**
-Maintains the current ghost mode (scatter, chase, or frightened) and signals an event when it changes.
+`GhostCoordinator` coordinates the group of ghosts and determines when they are released from the house. Also responsible for managing when Elroy mode begins.
 
-**Ghosts**
-Coordinates game state for all 4 ghosts and releases them from the ghost house.
+`GhostModeController` is a timing controller for scattered vs chase modes, as well as frightened status. Emits signals when mode or frightened status changes.
 
-**Ghost**
-Responsible for moving a Ghost around the maze depending on the current mode.
-Also responsible for Ghost animations.
+`GhostTargetingService` provides ghost-specific chase target calculations.
 
-**GhostTargeting**
-Provides targets for ghosts in chase mode.
+`BonusFruitActor` spawns a fruit at pellets-eaten thresholds and awards points if collected.
 
-**PacMan**
-Responsible for moving Pac-Man around the maze based on user input.
-Also responsible for PacMan animations.
+`LevelData` provides per-level configuration data, such as actor speeds, bonus fruit, bonus fruit points, and frightened mode configuration, etc.
 
-**ActorFactory**
-Responsible for creating Pac-Man and Ghost sprites.
+### States
 
-**LevelData**
-Maintains configuration data for all game levels and provides convenience functions to
-get specific data items for a given level.
+- `START_GAME`: initialize a new game, spawn actors, reset scores.
 
-## Features To-Do
+- `START_LEVEL`: reset pellets, reset per-level controllers (ghost mode, ghosts, fruit), update HUD.
 
-- Extra life
-- Game over
+- `START_PLAYER`: show “PLAYER ONE / READY” intro (first time only).
+
+- `START_ROUND`: place actors at their start positions, show “READY!”, then begin play.
+
+- `PLAYING`: main gameplay; collision checks happen here.
+
+- `PLAYER_DIED`: run death sequence, decrement lives, either restart round or go to game over.
+
+- `LEVEL_COMPLETE`: run level-clear sequence, advance level number, start next level.
+
+- `GAME_OVER`: show game over text, return to title.
+
+## Resources
+
+- The [Pac-Man Dossier](https://pacman.holenet.info/) is an amazing resource for details about how the original arcade game worked internally.
+
+- Game assets were thanks to [The Spriter's Resource](https://www.spriters-resource.com/arcade/pacman/).
+
+## Feature Backlog
+
 - Sound effects
 - Intermission animations
 - Attract mode on title screen
