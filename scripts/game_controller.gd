@@ -46,7 +46,6 @@ var _targeting: GhostTargetingService
 @onready var ghost_mode: GhostModeController = $GhostModeController
 @onready var ghost_coordinator: GhostCoordinator = $GhostCoordinator
 @onready var ghost_points_sprite: PointsSprite = $PointsSprite
-@onready var freeze_timer: Timer = $FreezeTimer # used while showing ghost points
 
 
 func _ready() -> void:
@@ -330,6 +329,5 @@ func _show_ghost_points(ghost: GhostActor, points: int) -> void:
 # Pauses game play briefly while ghost score is displayed.
 func _freeze_game(seconds: float) -> void:
     get_tree().paused = true
-    freeze_timer.start(seconds)
-    await freeze_timer.timeout
+    await get_tree().create_timer(seconds, true).timeout
     get_tree().paused = false

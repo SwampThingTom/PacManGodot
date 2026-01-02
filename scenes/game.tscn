@@ -134,7 +134,3 @@ z_index = 30
 sprite_frames = ExtResource("9_vtaks")
 animation = &"200"
 script = ExtResource("10_kvpfn")
-
-[node name="FreezeTimer" type="Timer" parent="."]
-process_mode = 3
-one_shot = true
