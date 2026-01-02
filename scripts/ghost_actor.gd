@@ -345,8 +345,8 @@ func _get_next_direction(from_cell: Vector2i, dir: Vector2i) -> Vector2i:
             best_dir = d
 
     # Reverse if no other option
-    if best_score == INF and maze.can_move_from_cell(from_cell, -dir):
-        return -dir
+    if best_score == INF:
+        best_dir = -dir
 
     return best_dir
 
