@@ -4,8 +4,9 @@ extends Node2D
 ##
 ## Moves Pac-Man around the maze based on user input.
 
-@export var maze: MazeMap
-@export var pellets: PelletsMap
+# Injected properties
+var maze: MazeMap
+var pellets: PelletsMap
 
 var _is_playing: bool = false
 var _level: int = 1
@@ -14,15 +15,15 @@ var _direction := Vector2i.LEFT
 var _desired_direction := Vector2i.ZERO
 var _pause_frames: int = 0
 
-@onready var anim := $Sprite
-@onready var dbg := $DebugDraw
+@onready var _sprite := $Sprite
+@onready var _dbg := $DebugDraw
 
 
 func _ready():
     pellets.pellet_eaten.connect(_on_pellet_eaten)
-    if dbg.visible:
-        dbg.maze = maze
-        dbg.pacman = self
+    if _dbg.visible:
+        _dbg.maze = maze
+        _dbg.pacman = self
 
 
 func _process(delta):
@@ -48,10 +49,10 @@ func _process(delta):
         _update_direction(_desired_direction)
     elif not _can_move_in_direction(_direction):
         position = maze.get_center_of_cell(_cell) # snap to center of cell
-        anim.pause()
+        _sprite.pause()
         return
 
-    anim.play()
+    _sprite.play()
     var speed: float = LevelData.get_pacman_normal_speed_pixels(_level)
     position += _direction * speed * delta
     position = maze.handle_tunnel(position)
@@ -71,22 +72,22 @@ func on_start_round() -> void:
     _update_direction(Vector2i.LEFT)
     _desired_direction = Vector2i.ZERO
     _pause_frames = 0
-    anim.pause()
+    _sprite.pause()
 
 
 func on_playing() -> void:
     _is_playing = true
-    anim.play()
+    _sprite.play()
 
 
 func on_player_died() -> void:
     _is_playing = false
-    anim.pause()
+    _sprite.pause()
 
 
 func on_level_complete() -> void:
     _is_playing = false
-    anim.pause()
+    _sprite.pause()
 
 
 # -----------------------------------------------
@@ -102,8 +103,8 @@ func get_direction() -> Vector2i:
 
 
 func play_death_animation() -> void:
-    anim.play("die")
-    await anim.animation_finished
+    _sprite.play("die")
+    await _sprite.animation_finished
 
 # -----------------------------------------------
 # Event Handlers
@@ -143,10 +144,10 @@ func _update_direction(dir: Vector2i):
     _direction = dir
     match _direction:
         Vector2i.LEFT:
-            anim.play("left")
+            _sprite.play("left")
         Vector2i.RIGHT:
-            anim.play("right")
+            _sprite.play("right")
         Vector2i.UP:
-            anim.play("up")
+            _sprite.play("up")
         Vector2i.DOWN:
-            anim.play("down")    
+            _sprite.play("down")    

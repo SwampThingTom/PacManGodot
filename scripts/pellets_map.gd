@@ -4,7 +4,7 @@ extends TileMapLayer
 
 signal pellet_eaten(is_power_pellet: bool, pellets_remaining: int)
 
-var pellets_remaining: int
+var _pellets_remaining: int
 var _snapshot: Array[Dictionary] = []
 
 
@@ -19,8 +19,12 @@ func reset_pellets() -> void:
             entry["source_id"],
             entry["atlas_coords"],
             entry["alternative"])
-    pellets_remaining = get_used_cells().size()
-    
+    _pellets_remaining = get_used_cells().size()
+
+
+func get_pellets_remaining() -> int:
+    return _pellets_remaining
+
 
 func try_eat_pellet(grid_pos: Vector2i) -> void:
     var tile_data := get_cell_tile_data(grid_pos)
@@ -28,10 +32,10 @@ func try_eat_pellet(grid_pos: Vector2i) -> void:
         return
     
     set_cell(grid_pos, -1)
-    pellets_remaining -= 1
+    _pellets_remaining -= 1
     
     var is_power_pellet := _tile_has_power_pellet(tile_data)
-    emit_signal("pellet_eaten", is_power_pellet, pellets_remaining)
+    emit_signal("pellet_eaten", is_power_pellet, _pellets_remaining)
 
 
 func _tile_has_power_pellet(tile_data: TileData) -> bool:

@@ -23,16 +23,16 @@ const DIRECTIONS: Array[Vector2i] = [
 
 const CENTER_EPS: float = 0.05
 
-@export var normal_animations: SpriteFrames
-@export var frightened_animations: SpriteFrames
-@export var flash_animations: SpriteFrames
-@export var eyes_animations: SpriteFrames
-
-@export var maze: MazeMap
-@export var ghost_mode_controller: GhostModeController
-@export var ghost_id: GhostCoordinator.GhostId
-@export var chase_target: Callable # returns a Vector2i for target cell
-@export var scatter_target: Vector2i
+# Injected properties
+var normal_animations: SpriteFrames
+var frightened_animations: SpriteFrames
+var flash_animations: SpriteFrames
+var eyes_animations: SpriteFrames
+var maze: MazeMap
+var ghost_mode_controller: GhostModeController
+var ghost_id: GhostCoordinator.GhostId
+var chase_target: Callable # returns a Vector2i for target cell
+var scatter_target: Vector2i
 
 var _is_playing: bool = false
 var _level: int

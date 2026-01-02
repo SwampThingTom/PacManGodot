@@ -7,6 +7,7 @@ const SECOND_FRUIT_COUNT: int = 170
 const FRUIT_AVAILABLE_SECONDS: float = 10.0
 const SCORE_SHOWN_SECONDS: float = 1.0
 
+# Injected properties
 @export var maze: MazeMap
 
 var _level: int

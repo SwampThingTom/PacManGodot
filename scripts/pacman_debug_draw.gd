@@ -3,8 +3,9 @@ extends Node2D
 ##
 ## Used to debug which cell the Pac-Man sprite is in.
 
+# Injected properties
 @export var pacman: Node2D
-@export var maze: TileMapLayer
+var maze: TileMapLayer
 
 
 func _process(_delta: float) -> void:

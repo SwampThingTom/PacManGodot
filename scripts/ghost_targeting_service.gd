@@ -2,6 +2,7 @@ class_name GhostTargetingService
 extends RefCounted
 ## Determines chase mode targets for each ghost.
 
+# Injected properties
 var pacman: PacManActor
 var ghosts: GhostCoordinator
 

@@ -43,6 +43,7 @@ const GLOBAL_PINKY_PELLET_LIMIT: int = 7
 const GLOBAL_INKY_PELLET_LIMIT: int = 17
 const GLOBAL_DEACTIVATE_LIMIT: int = 32
 
+# Injected properties
 @export var maze: MazeMap
 
 # Ghosts in order: blinky, pinky, inky, clyde
