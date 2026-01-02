@@ -49,6 +49,8 @@ var _targeting: GhostTargetingService
 
 
 func _ready() -> void:
+    # ensure that this node is processed after other nodes
+    process_priority = 100
     _start_game()
 
 
