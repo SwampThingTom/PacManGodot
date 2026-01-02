@@ -13,12 +13,12 @@ func _ready() -> void:
 
 
 func reset_pellets() -> void:
-    for entry in _snapshot:
+    for pellet in _snapshot:
         set_cell(
-            entry["cell"],
-            entry["source_id"],
-            entry["atlas_coords"],
-            entry["alternative"])
+            pellet.cell,
+            pellet.source_id,
+            pellet.atlas_coords,
+            pellet.alternative)
     _pellets_remaining = get_used_cells().size()
 
 
@@ -49,9 +49,22 @@ func _take_snapshot() -> void:
         var td: TileData = get_cell_tile_data(cell)
         if td == null:
             continue
-        _snapshot.append({
-            "cell": cell,
-            "source_id": get_cell_source_id(cell),
-            "atlas_coords": get_cell_atlas_coords(cell),
-            "alternative": get_cell_alternative_tile(cell),
-        })
+        _snapshot.append(PelletSnapshot.new(
+            cell, 
+            get_cell_source_id(cell),
+            get_cell_atlas_coords(cell),
+            get_cell_alternative_tile(cell)
+        ))
+
+
+class PelletSnapshot:
+    var cell: Vector2i
+    var source_id: int
+    var atlas_coords: Vector2i
+    var alternative: int
+    
+    func _init(cell: Vector2i, source_id: int, atlas_coords: Vector2i, alternative: int):
+        self.cell = cell
+        self.source_id = source_id
+        self.atlas_coords = atlas_coords
+        self.alternative = alternative
