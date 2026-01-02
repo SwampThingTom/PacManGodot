@@ -131,9 +131,7 @@ func on_playing() -> void:
     
     _next_individual_ghost = GhostId.PINKY
     if not _use_global_counter:
-        _refresh_next_ghost_in_house()
-        while _get_pellet_limit(_next_individual_ghost) == 0:
-            _release_next_ghost_individual()
+        _switch_to_individual_counter()
 
 
 func on_player_died() -> void:
@@ -186,6 +184,9 @@ func on_pellet_eaten(remaining_pellets: int) -> void:
     else:
         _handle_individual_pellet_eaten()
 
+# -----------------------------------------------
+# Helpers
+# -----------------------------------------------
 
 func _check_elroy_mode() -> void:
     if _is_elroy_paused:
@@ -203,7 +204,7 @@ func _handle_individual_pellet_eaten() -> void:
     if _next_individual_ghost >= _ghosts.size():
         return
 
-    assert(_get_pellet_limit(_next_individual_ghost) > 0, "Ghost has no pellet limit")
+    assert(_get_pellet_limit(_next_individual_ghost) > 0, "Ghost should have already released")
 
     _individual_counts[_next_individual_ghost] += 1
     if _individual_counts[_next_individual_ghost] >= _get_pellet_limit(_next_individual_ghost):
@@ -225,6 +226,7 @@ func _handle_global_pellet_eaten() -> void:
         if _is_in_house(GhostId.CLYDE):
             _use_global_counter = false
             _global_count = 0
+            _switch_to_individual_counter()
 
 
 func _on_ghost_revived(ghost_id: int) -> void:
@@ -246,6 +248,12 @@ func _on_ghost_revived(ghost_id: int) -> void:
         GhostId.CLYDE:
             # Do nothing here; Clyde never releases via the global counter.
             pass
+
+
+func _switch_to_individual_counter() -> void:
+    _refresh_next_ghost_in_house()
+    while _get_pellet_limit(_next_individual_ghost) == 0:
+        _release_next_ghost_individual()
 
 
 func _release_next_ghost_individual() -> void:
