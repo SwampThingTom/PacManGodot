@@ -46,6 +46,7 @@ func _process(delta):
 
     _sprite.play()
     var speed: float = LevelData.get_pacman_normal_speed_pixels(_level)
+    print("Pac-Man speed: ", speed, " (", speed * delta, " pixels)")
     position += _direction * speed * delta
     position = maze.handle_tunnel(position)
     _cell = maze.get_cell(position)
