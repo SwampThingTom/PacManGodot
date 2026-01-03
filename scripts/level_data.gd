@@ -7,8 +7,8 @@ class_name LevelData
 # Tile size in pixels (original arcade uses 8x8 tiles).
 const TILE_SIZE: float = 8.0
 
-# Pac-Man max speed in tiles/second. Original is ~10 tiles/s.
-const MAX_TILES_PER_SECOND: float = 10.0
+# Pac-Man max speed in tiles/second. (TODO: What did the original use?)
+const MAX_TILES_PER_SECOND: float = 9.47
 
 # Levels beyond this reuse the last entry.
 const MAX_DEFINED_LEVEL: int = 21
