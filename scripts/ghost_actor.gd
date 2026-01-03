@@ -76,11 +76,11 @@ func _process(delta):
 func _move_towards_next_cell(delta: float) -> bool:
     var speed: float = _get_speed()
     var move_distance: float = speed * delta
-    var distance_to_next_cell: float = (_next_cell_center - position).length()
     
-    if distance_to_next_cell > move_distance + CENTER_EPS:
+    if position.distance_to(_next_cell_center) > move_distance + CENTER_EPS:
         # Continue moving to next cell
         position += move_distance * _direction
+        _cell = maze.get_cell(position)
         return false
 
     # Snap to cell center

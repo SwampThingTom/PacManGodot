@@ -37,7 +37,6 @@ func _process(delta):
         _pause_frames -= 1
         return
 
-    _cell = maze.get_cell(position)
     pellets.try_eat_pellet(_cell)
     
     # TODO: Needed in case all pellets are eaten. Try to get rid of this.
@@ -56,6 +55,7 @@ func _process(delta):
     var speed: float = LevelData.get_pacman_normal_speed_pixels(_level)
     position += _direction * speed * delta
     position = maze.handle_tunnel(position)
+    _cell = maze.get_cell(position)
 
 
 # -----------------------------------------------
