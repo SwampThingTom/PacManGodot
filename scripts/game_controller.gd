@@ -22,6 +22,7 @@ const POWER_PELLET_POINTS: int = 50
 const INITIAL_GHOST_POINTS: int = 200
 const GHOST_SCORE_FREEZE_SECONDS: float = 0.25
 const EXTRA_LIFE_SCORE: int = 10_000
+const COLLISION_RADIUS: float = 2.0
 
 var _state: State = State.START_GAME
 var _level: int = 1
@@ -94,7 +95,6 @@ func _start_game() -> void:
     _level = 1
     _show_start_player = true
     _spawn_actors()
-    _connect_signals()
     _reset_scores()
     _transition_to(State.START_LEVEL)
 
@@ -217,14 +217,27 @@ func _run_game_over_sequence() -> void:
 func _check_collisions() -> void:
     # This assumes that all other nodes have already been processed this frame.
     # (i.e., process_priority of this node is larger than other nodes)
+    _check_pellet_collision()
     _check_fruit_collision()
     _check_ghost_collisions()
+
+
+func _check_pellet_collision() -> void:
+    var pacman_cell: Vector2i = _pacman.get_cell()
+    var pellet_position: Vector2 = _maze.get_center_of_cell(pacman_cell)
+    if not _pacman.position.distance_to(pellet_position) <= COLLISION_RADIUS:
+        return
+
+    var pellet: PelletsMap.PelletType = _pellets.try_eat_pellet(pacman_cell)
+    if pellet != PelletsMap.PelletType.None:
+        var pellets_remaining: int = _pellets.get_pellets_remaining()
+        _on_pellet_eaten(pellet == PelletsMap.PelletType.PowerPellet, pellets_remaining)
 
 
 func _check_fruit_collision() -> void:
     if not _fruit.is_available():
         return
-    if _pacman.position.distance_to(_fruit.position) <= 1.0:
+    if _pacman.position.distance_to(_fruit.position) <= COLLISION_RADIUS:
         _update_current_player_score(_fruit.get_points())
         _fruit.on_fruit_eaten()
 
@@ -295,10 +308,6 @@ func _spawn_actors() -> void:
         actor_factory.make_pinky(_ghost_mode, _targeting), 
         actor_factory.make_inky(_ghost_mode, _targeting), 
         actor_factory.make_clyde(_ghost_mode, _targeting))
-
-
-func _connect_signals() -> void:
-    _pellets.pellet_eaten.connect(_on_pellet_eaten)
 
 
 func _update_current_player_score(points: int) -> void:

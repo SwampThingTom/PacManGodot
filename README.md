@@ -23,7 +23,7 @@ Eventually hope to support Apple TV and iOS devices.
 
 `PelletsMap` is the tilemap for the pellets and source of truth for which cells have which kind of pellet.
 
-`PacManActor` takes input from the user and moves the Pac-Man sprite accordingly. Also responsible for detecting that a pellet was eaten.
+`PacManActor` takes input from the user and moves the Pac-Man sprite accordingly.
 
 `GhostActor` moves the ghost through the maze based on current state, mode, and frightened status.
 

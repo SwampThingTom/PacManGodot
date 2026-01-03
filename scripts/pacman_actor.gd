@@ -20,7 +20,6 @@ var _pause_frames: int = 0
 
 
 func _ready():
-    pellets.pellet_eaten.connect(_on_pellet_eaten)
     if _dbg.visible:
         _dbg.maze = maze
         _dbg.pacman = self
@@ -35,12 +34,6 @@ func _process(delta):
 
     if _pause_frames > 0:
         _pause_frames -= 1
-        return
-
-    pellets.try_eat_pellet(_cell)
-    
-    # TODO: Needed in case all pellets are eaten. Try to get rid of this.
-    if not _is_playing:
         return
     
     if _can_change_direction(_desired_direction):
@@ -106,11 +99,8 @@ func play_death_animation() -> void:
     _sprite.play("die")
     await _sprite.animation_finished
 
-# -----------------------------------------------
-# Event Handlers
-# -----------------------------------------------
 
-func _on_pellet_eaten(is_power_pellet: bool, _pellets_remaining: int):
+func on_pellet_eaten(is_power_pellet: bool, _pellets_remaining: int):
     _pause_frames = 3 if is_power_pellet else 1
 
 
