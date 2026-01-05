@@ -65,6 +65,7 @@ Eventually hope to support Apple TV and iOS devices.
 
 ## Feature Backlog
 
+- Persist high score
 - Intermission animations
 - Attract mode on title screen
 - Second player
@@ -72,6 +73,5 @@ Eventually hope to support Apple TV and iOS devices.
 ## Known Bugs
 
 - Ghost collisions are sometimes not detected
-- Joystick controls need tightening
 - Annoying click when looping final siren wav
 - Timing doesn't quite match arcade game

@@ -6,6 +6,9 @@ extends Node2D
 
 signal death_animation_finished
 
+const CONTROLLER_DEADZONE := 0.35
+const CONTROLLER_AXIS_DOMINANCE := 1.25
+
 # Injected properties
 var maze: MazeMap
 var pellets: PelletsMap
@@ -112,14 +115,15 @@ func on_pellet_eaten(is_power_pellet: bool, _pellets_remaining: int):
 # -----------------------------------------------
 
 func _handle_input() -> void:
-    if Input.is_action_pressed("move_left"):
-        _desired_direction = Vector2i.LEFT
-    elif Input.is_action_pressed("move_right"):
-        _desired_direction = Vector2i.RIGHT
-    elif Input.is_action_pressed("move_up"):
-        _desired_direction = Vector2i.UP
-    elif Input.is_action_pressed("move_down"):
-        _desired_direction = Vector2i.DOWN
+    var intent := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+
+    if intent.length() < CONTROLLER_DEADZONE:
+        return
+
+    if absf(intent.x) > absf(intent.y) * CONTROLLER_AXIS_DOMINANCE:
+        _desired_direction = Vector2i(int(sign(intent.x)), 0)
+    elif absf(intent.y) > absf(intent.x) * CONTROLLER_AXIS_DOMINANCE:
+        _desired_direction = Vector2i(0, int(sign(intent.y)))
 
 
 func _can_change_direction(dir: Vector2i) -> bool:
