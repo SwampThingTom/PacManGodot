@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://w36u071fkv8j"]
+[gd_scene load_steps=25 format=4 uid="uid://w36u071fkv8j"]
 
 [ext_resource type="Script" uid="uid://dpoaa0w2eb1b3" path="res://scripts/game_controller.gd" id="1_yqjtg"]
 [ext_resource type="TileSet" uid="uid://24h26788xdgn" path="res://resources/maze.tres" id="2_lnu2h"]
@@ -14,6 +14,16 @@
 [ext_resource type="SpriteFrames" uid="uid://1asnobrm0233" path="res://resources/ghost_points.tres" id="9_vtaks"]
 [ext_resource type="Script" uid="uid://hxdydydwctcg" path="res://scripts/points_sprite.gd" id="10_kvpfn"]
 [ext_resource type="Script" uid="uid://c0kw5cc3uo1ml" path="res://scripts/ghost_coordinator.gd" id="10_vtaks"]
+[ext_resource type="Script" uid="uid://ch06yqoyon5or" path="res://scripts/audio_manager.gd" id="15_ca42v"]
+[ext_resource type="AudioStream" uid="uid://34gb6sh3324p" path="res://assets/audio/start_game.wav" id="16_rysoc"]
+[ext_resource type="AudioStream" uid="uid://dmtsxoms77uvs" path="res://assets/audio/intermission.wav" id="17_37s47"]
+[ext_resource type="AudioStream" uid="uid://hiikqi0jtsyd" path="res://assets/audio/eat_pellet_1.wav" id="18_bt5mj"]
+[ext_resource type="AudioStream" uid="uid://6ku4ygl7mrkr" path="res://assets/audio/siren/siren_frightened.wav" id="18_e1j6l"]
+[ext_resource type="AudioStream" uid="uid://bl88b82r65afc" path="res://assets/audio/eat_fruit.wav" id="19_e1j6l"]
+[ext_resource type="AudioStream" uid="uid://b2iqlwtw4polm" path="res://assets/audio/eat_pellet_2.wav" id="19_pl11u"]
+[ext_resource type="AudioStream" uid="uid://d7sw2tjtu0fc" path="res://assets/audio/eat_ghost.wav" id="20_pl11u"]
+[ext_resource type="AudioStream" uid="uid://g446jrv1s62m" path="res://assets/audio/extra_life.wav" id="21_bhx41"]
+[ext_resource type="AudioStream" uid="uid://c5v8nfngfkdf2" path="res://assets/audio/player_died.wav" id="22_qnb83"]
 
 [node name="Game" type="Node2D"]
 process_priority = 100
@@ -134,3 +144,36 @@ z_index = 30
 sprite_frames = ExtResource("9_vtaks")
 animation = &"200"
 script = ExtResource("10_kvpfn")
+
+[node name="AudioManager" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("15_ca42v")
+
+[node name="StartGamePlayer" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("16_rysoc")
+
+[node name="IntermissionPlayer" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("17_37s47")
+
+[node name="SirenPlayer" type="AudioStreamPlayer" parent="AudioManager"]
+
+[node name="FrightenedPlayer" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("18_e1j6l")
+
+[node name="EatPellet1Player" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("18_bt5mj")
+
+[node name="EatPellet2Player" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("19_pl11u")
+
+[node name="EatFruitPlayer" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("19_e1j6l")
+
+[node name="EatGhostPlayer" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("20_pl11u")
+
+[node name="ExtraLifePlayer" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("21_bhx41")
+
+[node name="PlayerDiedPlayer" type="AudioStreamPlayer" parent="AudioManager"]
+stream = ExtResource("22_qnb83")

@@ -8,6 +8,7 @@ enum PelletType {
     PowerPellet
 }
 
+var _total_pellets: int
 var _pellets_remaining: int
 var _snapshot: Array[PelletSnapshot] = []
 
@@ -23,11 +24,16 @@ func reset_pellets() -> void:
             pellet.source_id,
             pellet.atlas_coords,
             pellet.alternative)
-    _pellets_remaining = get_used_cells().size()
+    _total_pellets = get_used_cells().size()
+    _pellets_remaining = _total_pellets
 
 
 func get_pellets_remaining() -> int:
     return _pellets_remaining
+
+
+func get_pellets_eaten() -> int:
+    return _total_pellets - _pellets_remaining
 
 
 func try_eat_pellet(cell: Vector2i) -> PelletType:

@@ -20,7 +20,7 @@ const TITLE_SCENE_PATH := "res://scenes/title.tscn"
 const PELLET_POINTS: int = 10
 const POWER_PELLET_POINTS: int = 50
 const INITIAL_GHOST_POINTS: int = 200
-const GHOST_SCORE_FREEZE_SECONDS: float = 0.25
+const GHOST_SCORE_FREEZE_SECONDS: float = 0.4
 const EXTRA_LIFE_SCORE: int = 10_000
 const COLLISION_RADIUS: float = 2.0
 
@@ -47,11 +47,13 @@ var _targeting: GhostTargetingService
 @onready var _ghost_mode: GhostModeController = $GhostModeController
 @onready var _ghost_coordinator: GhostCoordinator = $GhostCoordinator
 @onready var _ghost_points_sprite: PointsSprite = $PointsSprite
+@onready var _audio_manager: Node = $AudioManager
 
 
 func _ready() -> void:
     # ensure that this node is processed after other nodes
     process_priority = 100
+    _ghost_mode.frightened_changed.connect(_on_frightened_changed)
     _start_game()
 
 
@@ -96,6 +98,7 @@ func _start_game() -> void:
     _show_start_player = true
     _spawn_actors()
     _reset_scores()
+    _audio_manager.play_start_game()
     _transition_to(State.START_LEVEL)
 
 
@@ -132,6 +135,7 @@ func _start_round() -> void:
 
 func _playing() -> void:
     print("PLAYING")
+    _audio_manager.start_siren(_pellets.get_pellets_eaten())
     _pacman.on_playing()
     _ghost_mode.on_playing()
     _ghost_coordinator.on_playing()
@@ -185,19 +189,29 @@ func _show_ready_sequence() -> void:
     _status_renderer.update_lives(_extra_lives)
     _pacman.show()
     _ghost_coordinator.show_all()
-    await get_tree().create_timer(1.6).timeout
+    await get_tree().create_timer(1.8).timeout
     _ready_text_renderer.hide()
 
 
 func _run_death_sequence() -> void:
+    _audio_manager.stop_siren()
     await get_tree().create_timer(1.0).timeout
     _ghost_coordinator.hide_all()
-    await _pacman.play_death_animation()
+    _play_pacman_death_animation()
     _pacman.hide()
     await get_tree().create_timer(1.0).timeout
 
 
+func _play_pacman_death_animation() -> void:
+    _pacman.play_death_animation()
+    # delay audio slightly to line up with death animation
+    await get_tree().create_timer(0.4).timeout
+    _audio_manager.play_player_died()
+    await _pacman.death_animation_finished
+
+
 func _run_level_complete_sequence() -> void:
+    _audio_manager.stop_siren()
     await get_tree().create_timer(1.0).timeout
     _ghost_coordinator.hide_all()
     _pacman.hide()
@@ -238,8 +252,7 @@ func _check_fruit_collision() -> void:
     if not _fruit.is_available():
         return
     if _pacman.position.distance_to(_fruit.position) <= COLLISION_RADIUS:
-        _update_current_player_score(_fruit.get_points())
-        _fruit.on_fruit_eaten()
+        _on_fruit_eaten()
 
 
 func _check_ghost_collisions() -> void:
@@ -263,7 +276,9 @@ func _on_collision(ghost: GhostActor) -> void:
 # Event Handlers
 # -----------------------------------------------
 
-func _on_pellet_eaten(is_power_pellet: bool, pellets_remaining: int):
+func _on_pellet_eaten(is_power_pellet: bool, pellets_remaining: int) -> void:
+    _audio_manager.play_eat_pellet()
+
     var points := POWER_PELLET_POINTS if is_power_pellet else PELLET_POINTS
     _update_current_player_score(points)
     _ghost_coordinator.on_pellet_eaten(pellets_remaining)
@@ -272,16 +287,31 @@ func _on_pellet_eaten(is_power_pellet: bool, pellets_remaining: int):
     if is_power_pellet:
         _next_ghost_points = INITIAL_GHOST_POINTS
         _ghost_mode.start_frightened()
+        _audio_manager.start_frightened()
     
     if pellets_remaining == 0:
         _transition_to(State.LEVEL_COMPLETE)
+        return
+    
+    _audio_manager.update_siren_for_pills(_pellets.get_pellets_eaten())
 
 
-func _on_ghost_eaten(ghost: GhostActor):
+func _on_fruit_eaten() -> void:
+    _update_current_player_score(_fruit.get_points())
+    _fruit.on_fruit_eaten()
+    _audio_manager.play_eat_fruit()
+
+
+func _on_ghost_eaten(ghost: GhostActor) -> void:
     _update_current_player_score(_next_ghost_points)
     await _show_ghost_points(ghost, _next_ghost_points)
     ghost.on_eaten()
     _next_ghost_points *= 2
+
+
+func _on_frightened_changed(is_frightened: bool) -> void:
+    if not is_frightened:
+        _audio_manager.stop_frightened(_pellets.get_pellets_eaten())
 
 
 # -----------------------------------------------
@@ -323,6 +353,7 @@ func _update_current_player_score(points: int) -> void:
         _was_extra_life_scored = true
         _extra_lives += 1
         _status_renderer.update_lives(_extra_lives)
+        _audio_manager.play_extra_life()
 
 
 func _show_ghost_points(ghost: GhostActor, points: int) -> void:
@@ -331,6 +362,7 @@ func _show_ghost_points(ghost: GhostActor, points: int) -> void:
 
     _ghost_points_sprite.position = _maze.get_center_of_cell(ghost.get_cell())
     _ghost_points_sprite.show_points(points)
+    _audio_manager.play_eat_ghost()
     await _freeze_game(GHOST_SCORE_FREEZE_SECONDS)
     _ghost_points_sprite.hide()
 

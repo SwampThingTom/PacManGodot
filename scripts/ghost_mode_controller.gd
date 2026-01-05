@@ -85,6 +85,10 @@ func get_mode() -> Mode:
     return _mode
 
 
+func get_frightened() -> bool:
+    return _is_frightened
+
+
 func start_frightened() -> void:
     _set_frightened(true)
 

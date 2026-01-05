@@ -59,11 +59,19 @@ Eventually hope to support Apple TV and iOS devices.
 
 - The [Pac-Man Dossier](https://pacman.holenet.info/) is an amazing resource for details about how the original arcade game worked internally.
 
-- Game assets were thanks to [The Spriter's Resource](https://www.spriters-resource.com/arcade/pacman/).
+- Graphic assets were thanks to [The Spriter's Resource](https://www.spriters-resource.com/arcade/pacman/).
+
+- Audio assets were thanks to [Sound Effects Wiki](https://soundeffects.fandom.com/wiki/Pac-Man).
 
 ## Feature Backlog
 
-- Sound effects
 - Intermission animations
 - Attract mode on title screen
 - Second player
+
+## Known Bugs
+
+- Ghost collisions are sometimes not detected
+- Joystick controls need tightening
+- Annoying click when looping final siren wav
+- Timing doesn't quite match arcade game

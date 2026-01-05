@@ -4,6 +4,8 @@ extends Node2D
 ##
 ## Moves Pac-Man around the maze based on user input.
 
+signal death_animation_finished
+
 # Injected properties
 var maze: MazeMap
 var pellets: PelletsMap
@@ -98,6 +100,7 @@ func get_direction() -> Vector2i:
 func play_death_animation() -> void:
     _sprite.play("die")
     await _sprite.animation_finished
+    death_animation_finished.emit()
 
 
 func on_pellet_eaten(is_power_pellet: bool, _pellets_remaining: int):
