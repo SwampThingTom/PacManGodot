@@ -197,7 +197,7 @@ func _run_death_sequence() -> void:
     _audio_manager.stop_siren()
     await get_tree().create_timer(1.0).timeout
     _ghost_coordinator.hide_all()
-    _play_pacman_death_animation()
+    await _play_pacman_death_animation()
     _pacman.hide()
     await get_tree().create_timer(1.0).timeout
 
